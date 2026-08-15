@@ -60,6 +60,10 @@ const updateVendor = async (req, res) => {
     try {
         const vendorId = req.params.id;
         const updateData = req.body;
+        const profileImg = req.file ? req.file.path : undefined;
+        if (profileImg) {
+            updateData.profileImg = profileImg;
+        }
         const vendor = await Vendor.findByIdAndUpdate(vendorId, updateData, { new: true, runValidators: true });
 
         if (!vendor) {
