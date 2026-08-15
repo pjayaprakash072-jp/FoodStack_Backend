@@ -1,0 +1,71 @@
+const mongoose = require('mongoose')
+
+const outletSchema = new mongoose.Schema(
+    {
+        vendor:{
+            type: mongoose.Schema.Types.ObjectId,
+            ref:"Vendor",
+            required:true
+        },
+        name:{
+            type:String,
+            required:true,
+            trim:true
+        },
+        description:{
+            type:String,
+            default:""
+        },
+        image:{
+            type:String,
+            default:""
+        },
+        phone:{
+            type:String,
+            required:true
+        },
+        address:{
+            type:String,
+            required:true
+        },
+        city:{
+            type:String,
+            required:true 
+        },
+        area:{
+            type:String,
+            required:true 
+        },
+        cuisine:{
+            type:[String],
+            default:[]
+        },
+        foodType:{
+            type:String,
+            enum:["veg","non-veg","both"],
+            default:"both"
+        },
+        openingTime:{
+            type:String,
+            required:true
+        },
+        closingTime:{
+            type:String,
+            required:true
+        },
+        isOpen:{
+            type:Boolean,
+            default:true
+        },
+        statue:{
+            type:String,
+            enum:["active","inactive"],
+            default:"active"
+        }
+    },
+    {
+        timestamps:true
+    }
+)
+
+module.exports = mongoose.model("Outlet",outletSchema)
