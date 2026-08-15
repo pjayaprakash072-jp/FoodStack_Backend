@@ -57,7 +57,7 @@ const outletSchema = new mongoose.Schema(
             type:Boolean,
             default:true
         },
-        statue:{
+        status:{
             type:String,
             enum:["active","inactive"],
             default:"active"
