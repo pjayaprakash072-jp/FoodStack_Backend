@@ -19,7 +19,7 @@ const menuItemSchema = new mongoose.Schema(
         },
         description: {
             type: String,
-            rdefault: ''
+            default: ''
         },
         price: {
             type: Number,
