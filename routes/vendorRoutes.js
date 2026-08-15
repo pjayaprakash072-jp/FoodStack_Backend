@@ -4,8 +4,10 @@ const { createVendor, getAllVendors, getVendorById, updateVendor, deleteVendor }
 
 const upload = require("../middleware/upload")
 
-router.post("/vendors", upload.single("profileImg"), createVendor);
-router.get("/vendors", getAllVendors);
-router.get("/vendors/:id", getVendorById);
-router.put("/vendors/:id", upload.single("profileImg"), updateVendor);
-router.delete("/vendors/:id", deleteVendor);
+router.post("/create", upload.single("profileImg"), createVendor);
+router.get("/all", getAllVendors);
+router.get("/:id", getVendorById);
+router.put("/update/:id", upload.single("profileImg"), updateVendor);
+router.delete("/delete/:id", deleteVendor);
+
+module.exports = router;
