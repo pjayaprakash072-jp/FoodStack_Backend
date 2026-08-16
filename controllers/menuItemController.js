@@ -112,5 +112,29 @@ const updateMenuItem = async (req, res) => {
     }
 }
 
+const deleteMenuItem = async (req, res) => {
+    const menuItemId = req.params.menuItemId;
+    try{
+        const menuItem = await MenuItem.findByIdAndDelete(menuItemId);
+        if(!menuItem){
+            return res.status(404).json({message:"Menu item not found"});
+        }
+        res.status(200).json({message:"Menu item deleted successfully",menuItem})
+    }
+    catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Internal server error",error:err.message });
+    }
+}
+
+module.exports = {
+    createMenuItem,
+    getMenuItemById,
+    getMenuitemsByOutlet,
+    getMenuItemsByCategory,
+    updateMenuItem,
+    deleteMenuItem,
+    getAllMenuItems
+};
 
 
