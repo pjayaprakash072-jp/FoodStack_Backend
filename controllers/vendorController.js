@@ -1,4 +1,7 @@
 const Vendor = require('../models/Vendor')
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+
 
 
 const createVendor = async (req, res) => {
@@ -10,12 +13,16 @@ const createVendor = async (req, res) => {
             phone,
             businessName
         } = req.body;
-
+        const existingVendor = await Vendor.findOne({ email });
+        if (existingVendor) {
+            return res.status(400).json({ message: "Vendor with this email already exists" });
+        }
+        const hashedPassword = await bcrypt.hash(password, 10);
         const profileImg = req.file ? req.file.path : "";
         const vendor = new Vendor({
             name,
             email,
-            password,
+            password: hashedPassword,
             phone,
             businessName,
             profileImg
@@ -32,7 +39,24 @@ const createVendor = async (req, res) => {
 
 }
 
-
+const loginVendor = async (req, res) => {
+    try {
+        const { email, password } = req.body;
+        const vendor = await Vendor.findOne({ email });
+        if (!vendor) {
+            return res.status(404).json({ message: "Vendor not found" });
+        }
+        const isMatch = await bcrypt.compare(password, vendor.password);
+        if (!isMatch) {
+            return res.status(401).json({ message: "Invalid credentials" });
+        }
+        const token = jwt.sign({ id: vendor._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        res.status(200).json({ message: "Vendor logged in successfully", token, vendor });
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: "Internal server error", error: error.message });
+    }
+};
 
 const getAllVendors = async (req, res) => {
     try {
@@ -101,6 +125,7 @@ module.exports = {
     getAllVendors,
     getVendorById,
     updateVendor,
-    deleteVendor
+    deleteVendor,
+    loginVendor
 };
 
