@@ -4,11 +4,11 @@ const router = express.Router();
 const upload = require('../middleware/upload');
 
 
-router.post('/', upload.single('image'), menuCategoryController.createMenuCategory);
+router.post('/create/:outletId', upload.single('image'), menuCategoryController.createMenuCategory);
 router.get('/outlet/:outletId', menuCategoryController.getMenuCategoriesByOutlet);
-router.get('/', menuCategoryController.getAllMenuCategories);
+router.get('/all', menuCategoryController.getAllMenuCategories);
 router.get('/:id', menuCategoryController.getMenuCategoryById);
 router.put('/:id', upload.single('image'), menuCategoryController.updateMenuCategory);
-router.delete('/:id', menuCategoryController.deleteMenuCategory);
+router.delete('/delete/:id', menuCategoryController.deleteMenuCategory);
 
 module.exports = router;

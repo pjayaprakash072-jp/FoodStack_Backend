@@ -25,13 +25,20 @@ const menuItemSchema = new mongoose.Schema(
             type: Number,
             required: true
         },
+        stock: {
+            type: Number,
+            default: 0,
+            min: 0
+        },
         image: {
             type: String,
             default: '' 
         },
         discount: {
             type: Number,
-            default: 0  
+            default: 0 ,
+            min: 0,
+            max: 100
         },
         foodType: {
             type: String,
