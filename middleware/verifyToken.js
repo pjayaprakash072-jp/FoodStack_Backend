@@ -1,8 +1,9 @@
 const jwt = require('jsonwebtoken');
+const Vendor = require('../models/Vendor');
 
 const verifyToken = async (req, res, next) => {
 
-    const token = req.header.token;
+    const token = req.headers.token;
     try {
         if (!token) {
             return res.status(401).json({ message: "Access denied. No token provided." });
@@ -15,6 +16,7 @@ const verifyToken = async (req, res, next) => {
         req.vendorId = vendor._id;
         next();
     } catch (err) {
+        console.error(err);
         return res.status(403).json({ message: "Token is not valid!" });
     }
 };

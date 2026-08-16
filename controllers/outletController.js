@@ -1,5 +1,5 @@
 const Outlet = require('../models/Outlet');
-
+const Vendor = require('../models/Vendor');
 
 const createOutlet = async (req, res) => {
     try {
@@ -34,7 +34,8 @@ const createOutlet = async (req, res) => {
             cuisine,
             foodType,
             openingTime,
-            closingTime
+            closingTime,
+            vendor: vendor._id
         });
         await newOutlet.save();
         res.status(201).json({ message: "Outlet created successfully", outlet: newOutlet });    
@@ -91,7 +92,7 @@ const updateOutlet = async (req, res) => {
         const outlet = await Outlet.findByIdAndUpdate(
             req.params.id, 
             req.body, 
-            { new: true,
+            { returnDocument: 'after',
                 
             runValidators: true});
         if (!outlet) {

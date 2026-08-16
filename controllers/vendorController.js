@@ -90,7 +90,7 @@ const updateVendor = async (req, res) => {
         if (profileImg) {
             updateData.profileImg = profileImg;
         }
-        const vendor = await Vendor.findByIdAndUpdate(vendorId, updateData, { new: true, runValidators: true });
+        const vendor = await Vendor.findByIdAndUpdate(vendorId, updateData, { returnDocument: 'after', runValidators: true });
 
         if (!vendor) {
             return res.status(404).json({ message: "Vendor not found" });

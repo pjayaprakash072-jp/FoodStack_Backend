@@ -4,6 +4,7 @@ dotenv.config();
 const app = express();
 const connectDB = require("./config/db");
 const vendorRoutes = require("./routes/vendorRoutes");
+const outletRoutes = require("./routes/outletRoutes");
 // Connect to MongoDB
 connectDB();
 
@@ -13,6 +14,8 @@ app.use(express.json());
 
 
 app.use("/vendor", vendorRoutes);
+app.use("/outlet", outletRoutes);
+
 
 const PORT = process.env.PORT || 5000;  
 
