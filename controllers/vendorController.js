@@ -21,6 +21,8 @@ const createVendor = async (req, res) => {
             profileImg
         });
 
+        await vendor.save();
+
         res.status(201).json({ message: "Vendor created successfully", vendor });
     }
     catch (error) {

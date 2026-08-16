@@ -12,7 +12,7 @@ app.use(cors());
 app.use(express.json());
 
 
-app.use("/vendors", vendorRoutes);
+app.use("/vendor", vendorRoutes);
 
 const PORT = process.env.PORT || 5000;  
 
