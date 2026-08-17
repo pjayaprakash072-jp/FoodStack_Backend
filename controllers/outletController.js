@@ -46,6 +46,7 @@ const createOutlet = async (req, res) => {
             closingTime,
             vendor: vendor._id
         });
+        vendor.outlets.push(newOutlet._id);
         await newOutlet.save();
         res.status(201).json({ message: "Outlet created successfully", outlet: newOutlet });    
     }catch (error) {
@@ -68,7 +69,7 @@ const getAllOutlets = async (req, res) => {
 
 const getOutletById = async (req, res) => {
     try {
-        const outletId = outlerid; 
+        const outletId = req.params.id; 
         const outlet = await Outlet.findById(outletId).populate('vendor', 'name email phone');
         if (!outlet) {
             return res.status(404).json({ message: "Outlet not found" });

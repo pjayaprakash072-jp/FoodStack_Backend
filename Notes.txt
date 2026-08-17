@@ -3,7 +3,7 @@ API's:
 
 1. Vendor
 ---------
-    1. Create -> localhost:5000/vendor/create
+✅    1. Create -> localhost:5000/vendor/create 
             {
                 "name": "jayaprakash",
                 "email": "jaya@gmail.com",
@@ -13,25 +13,25 @@ API's:
                 "status": "inactive"
             }
 
-    2. Login -> localhost:5000/vendor/login
+✅    2. Login -> localhost:5000/vendor/login 
 
             {
                 "email": "jaya@gmail.com",
                 "password": "jaya"
             }
 
-    3. GetAllVendors -> localhost:5000/vendor/getall
-    4. Get one vendor -> localhost:5000/vendor/get/:id
+✅    3. GetAllVendors -> localhost:5000/vendor/getall 
+✅    4. Get one vendor -> localhost:5000/vendor/get/:id
     5. Update vendor -> localhost:5000/vendor/update/:id
     6. delete vendor -> localhost:5000/vendor/delete/:id
 
 
 2. outlet
 ---------
-    1. Create -> localhost:5000/outlet/create  <=====>   token needed.
-    2. All outlets -> localhost:5000/outlet/all
-    3. Single Outlet ->localhost:5000/outlet/get/:id
-    4. outlets by Vendor -> localhost:5000/outlet/vendor/:vendorid
+✅    1. Create -> localhost:5000/outlet/create  <=====>   token needed.
+✅    2. All outlets -> localhost:5000/outlet/getall
+✅    3. Single Outlet ->localhost:5000/outlet/get/:id
+✅    4. outlets by Vendor -> localhost:5000/outlet/vendor/:vendorid
     5. Update -> localhost:5000/outlet/update/:id  <=====>   token needed.
     6. delete -> localhost:5000/outlet/delete/:id  <=====>   token needed.
 
@@ -39,7 +39,7 @@ API's:
 ----------------
     1. Create -> localhost:5000/menu-category/create/:outletId
     2. MenuCategories by Outlet -> localhost:5000/menu-category/outlet/:outletid
-    3. All Categories -> localhost:5000/menu-category/all
+    3. All Categories -> localhost:5000/menu-category/getall
     4. Single Category -> localhost:5000/menu-category/get/:id 
     5. Update -> localhost:5000/menu-category/update/:id 
     6. delete -> localhost:5000/menu-category/delete/:id 
@@ -48,7 +48,7 @@ API's:
 4. MenuItem
 ------------
     1. Create -> localhost:5000/menu-item/add/:categoryid
-    2. All Items -> localhost:5000/menu-item/all
+    2. All Items -> localhost:5000/menu-item/getall
     3. Items by Outler -> localhost:5000/menu-item/outlet/:outletid 
     4. Items by Category -> localhost:5000/menu-item/category/:categoryid
     5. single Item -> localhost:5000/menu-item/get/:meuItemId
@@ -57,3 +57,4 @@ API's:
 
 
 
+// TESTING IS PENDING....

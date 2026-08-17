@@ -44,6 +44,7 @@ const createMenuItem = async (req, res) => {
             preparationTime,
             isAvailable
         });
+        category.menuItems.push(newMenuItem._id);
         await newMenuItem.save();
         res.status(201).json({ message: "Menu item created successfully", menuItem: newMenuItem });
     } catch (err) {

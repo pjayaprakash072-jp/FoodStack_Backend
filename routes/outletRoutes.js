@@ -7,7 +7,7 @@ const router = express.Router();
 const verifyToken = require("../middleware/verifyToken");
 
 router.post("/create", verifyToken, upload.single("image"), outletController.createOutlet);
-router.get("/all", outletController.getAllOutlets);
+router.get("/getall", outletController.getAllOutlets);
 router.get("/get/:id", outletController.getOutletById);
 router.get("/vendor/:vendorId", outletController.getOutletsByVendorId);
 router.put("/update/:id", verifyToken, upload.single("image"), outletController.updateOutlet);

@@ -1,5 +1,5 @@
 const mongoose = require('mongoose')
-
+const MenuItem = require('../models/MenuItem')
 const menuCategorySchema = new mongoose.Schema(
     {
         outlet:{
@@ -7,6 +7,12 @@ const menuCategorySchema = new mongoose.Schema(
             ref: "Outlet",
             required: true
         },
+        menuItems:[
+            {
+                type:mongoose.Schema.Types.ObjectId,
+                ref : "MenuItem"
+            }
+        ],
         name:{
             type:String,
             required:true,

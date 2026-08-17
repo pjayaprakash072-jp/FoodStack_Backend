@@ -1,7 +1,13 @@
 const mongoose = require('mongoose')
-
+const Outlet = require('../models/Outlet')
 const vendorSchema = new mongoose.Schema(
     {
+        outlets:[
+            {
+                type:mongoose.Schema.Types.ObjectId,
+                ref :"Outlet"
+            }
+        ],
         name:{
             type:String,
             required: true

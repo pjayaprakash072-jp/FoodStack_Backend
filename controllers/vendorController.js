@@ -2,7 +2,7 @@ const Vendor = require('../models/Vendor')
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const Outlet = require('../models/Outlet');
-const MenuCategory = erquire('../models/MenuCategory');
+const MenuCategory = require('../models/MenuCategory');
 const MenuItem = require('../models/MenuItem');
 
 
