@@ -94,17 +94,24 @@ const getVendorById = async (req, res) => {
 const updateVendor = async (req, res) => {
     try {
         const vendorId = req.params.id;
-        const updateData = req.body;
-        const profileImg = req.file ? req.file.path : undefined;
-        if (profileImg) {
-            updateData.profileImg = profileImg;
-        }
-        const vendor = await Vendor.findByIdAndUpdate(vendorId, updateData, { returnDocument: 'after', runValidators: true });
-
+        const vendor = await Vendor.findById(vendorId);
         if (!vendor) {
             return res.status(404).json({ message: "Vendor not found" });
         }
-
+        // if new image is uploaded, delete the old image from cloudinary
+        if(req.file){
+            if(vendor.profileImg?.public_id){
+                await cloudinary.uploader.destroy(vendor.profileImg.public_id);
+            }
+            //save new cloudinary image details.
+            vendor.profileImg = {
+                public_id: req.file.filename,
+                url: req.file.path
+            }
+        }
+        // update otehr values
+        Object.assign(vendor,req.body);
+        await vendor.save();
         res.status(200).json({ message: "Vendor updated successfully", vendor });
     } catch (error) {
         console.error(error);

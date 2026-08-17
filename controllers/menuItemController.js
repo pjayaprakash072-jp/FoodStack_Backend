@@ -107,10 +107,25 @@ const getMenuItemsByCategory = async (req, res) => {
 const updateMenuItem = async (req, res) => {
     try{
         const menuItemId = req.params.menuItemId;
-        const menuItem = await MenuItem.findByIdAndUpdate(menuItemId,req.body,{new:true,runValidators:true});
+        const menuItem = await MenuItem.findById(menuItemId);
         if(!menuItem){
             return res.status(404).json({message:"Menu item not found"});
         }
+        // If new image is uploaded, delete the old image from cloudinary
+        if(req.file){
+            if(menuItem.image?.public_id){
+                await cloudinary.uploader.destroy(menuItem.image.public_id);
+            }
+            //save new cloudinary image details.
+            menuItem.image = {
+                public_id: req.file.filename,
+                url: req.file.path
+            }
+        }
+        // update otehr fields.
+        Object.assign(menuItem,req.body);
+        await menuItem.save();
+        
         res.status(200).json({message:"Menu item updated successfully",menuItem})
     }
     catch (err) {

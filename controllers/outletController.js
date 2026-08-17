@@ -97,16 +97,25 @@ const getOutletsByVendorId = async (req, res) => {
 
 const updateOutlet = async (req, res) => {
     try {
-
-        const outlet = await Outlet.findByIdAndUpdate(
-            outlerid, 
-            req.body, 
-            { returnDocument: 'after',
-                
-            runValidators: true});
+        const outletId = req.params.id;
+        const outlet = await Outlet.findById(outletId);
         if (!outlet) {
             return res.status(404).json({ message: "Outlet not found" });
         }   
+        // if new image is uploaded, delete the old image from cloudinary
+        if(req.file){
+            if(outlet.image?.public_id){
+                await cloudinary.uploader.destroy(outlet.image.public_id);
+            }
+            //save new cloudinary image details.
+            outlet.image = {
+                public_id: req.file.filename,
+                url: req.file.path
+            }
+        }
+        // update otehr values
+        Object.assign(outlet,req.body);
+        await outlet.save();
         res.status(200).json({ message: "Outlet updated successfully", outlet });
 
     } catch (error) {
