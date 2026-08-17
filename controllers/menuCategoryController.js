@@ -35,6 +35,7 @@ const createMenuCategory = async(req,res)=>{
             isActive
         });
         outlet.menuCategories.push(menuCategory._id);
+        await outlet.save();
         await menuCategory.save();
         res.status(201).json({message:"Menu category created successfully",menuCategory});
     } catch (error) {

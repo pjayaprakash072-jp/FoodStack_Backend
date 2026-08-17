@@ -1,5 +1,6 @@
 const MenuItem = require("../models/MenuItem");
-const Categor = require("../models/MenuCategory");
+const Category = require("../models/MenuCategory");
+const Outlet = require('../models/Outlet')
 const createMenuItem = async (req, res) => {
     const categoryId = req.params.categoryId;
     try {
@@ -15,12 +16,13 @@ const createMenuItem = async (req, res) => {
             isAvailable
         }
         = req.body;
-        const category = await Categor.findById(categoryId);
+        const category = await Category.findById(categoryId);
         if (!category) {
             return res.status(404).json({ message: "Category not found" });
         }
         const outletId = category.outlet;
-        if (!outletId) {
+        const outlet = await Outlet.findById(outletId)
+        if (!outlet) {
             return res.status(404).json({ message: "Outlet not found" });
         }
         const image = req.file 
@@ -45,6 +47,9 @@ const createMenuItem = async (req, res) => {
             isAvailable
         });
         category.menuItems.push(newMenuItem._id);
+        await category.save();
+        outlet.menuItems.push(newMenuItem._id);
+        await outlet.save();
         await newMenuItem.save();
         res.status(201).json({ message: "Menu item created successfully", menuItem: newMenuItem });
     } catch (err) {

@@ -37,24 +37,24 @@ API's:
 
 3. Menu-Category
 ----------------
-    1. Create -> localhost:5000/menu-category/create/:outletId
-    2. MenuCategories by Outlet -> localhost:5000/menu-category/outlet/:outletid
-    3. All Categories -> localhost:5000/menu-category/getall
-    4. Single Category -> localhost:5000/menu-category/get/:id 
+✅    1. Create -> localhost:5000/menu-category/create/:outletId
+✅    2. MenuCategories by Outlet -> localhost:5000/menu-category/outlet/:outletid
+✅    3. All Categories -> localhost:5000/menu-category/getall
+✅    4. Single Category -> localhost:5000/menu-category/get/:id 
     5. Update -> localhost:5000/menu-category/update/:id 
     6. delete -> localhost:5000/menu-category/delete/:id 
 
 
 4. MenuItem
 ------------
-    1. Create -> localhost:5000/menu-item/add/:categoryid
-    2. All Items -> localhost:5000/menu-item/getall
-    3. Items by Outler -> localhost:5000/menu-item/outlet/:outletid 
-    4. Items by Category -> localhost:5000/menu-item/category/:categoryid
-    5. single Item -> localhost:5000/menu-item/get/:meuItemId
+✅    1. Create -> localhost:5000/menu-item/add/:categoryid
+✅    2. All Items -> localhost:5000/menu-item/getall
+✅    3. Items by Outler -> localhost:5000/menu-item/outlet/:outletid 
+✅    4. Items by Category -> localhost:5000/menu-item/category/:categoryid
+✅    5. single Item -> localhost:5000/menu-item/get/:meuItemId
     6. update -> localhost:5000/menu-item/update/:munuItemId
     7. delete -> localhost:5000/menu-item/delete/menuItemId.
 
 
 
-// TESTING IS PENDING....
+// TESTING IS PENDING.... include code for pull id when delete.

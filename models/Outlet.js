@@ -1,5 +1,6 @@
 const mongoose = require('mongoose')
 const MenuCategory = require('../models/MenuCategory')
+const MenuItem = require('../models/MenuItem')
 
 const outletSchema = new mongoose.Schema(
     {
@@ -12,6 +13,12 @@ const outletSchema = new mongoose.Schema(
             {
                 type:mongoose.Schema.Types.ObjectId,
                 ref:"MenuCategory"
+            }
+        ],
+        menuItems:[
+            {
+                type:mongoose.Schema.Types.ObjectId,
+                ref:"MenuItem"
             }
         ],
         name:{

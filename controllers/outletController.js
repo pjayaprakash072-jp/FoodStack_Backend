@@ -47,6 +47,7 @@ const createOutlet = async (req, res) => {
             vendor: vendor._id
         });
         vendor.outlets.push(newOutlet._id);
+        await vendor.save();
         await newOutlet.save();
         res.status(201).json({ message: "Outlet created successfully", outlet: newOutlet });    
     }catch (error) {
