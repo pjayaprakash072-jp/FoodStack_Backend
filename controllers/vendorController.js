@@ -1,7 +1,9 @@
 const Vendor = require('../models/Vendor')
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-
+const Outlet = require('../models/Outlet');
+const MenuCategory = erquire('../models/MenuCategory');
+const MenuItem = require('../models/MenuItem');
 
 
 const createVendor = async (req, res) => {
@@ -18,7 +20,14 @@ const createVendor = async (req, res) => {
             return res.status(400).json({ message: "Vendor with this email already exists" });
         }
         const hashedPassword = await bcrypt.hash(password, 10);
-        const profileImg = req.file ? req.file.path : "";
+        const profileImg = req.file
+        ? {
+            url:req.file.path,
+            public_id:req.file.filename
+        }:{
+            url:"",
+            public_id:""
+        }
         const vendor = new Vendor({
             name,
             email,
@@ -107,10 +116,27 @@ const updateVendor = async (req, res) => {
 const deleteVendor = async (req, res) => {
     try {
         const vendorId = req.params.id;
-        const vendor = await Vendor.findByIdAndDelete(vendorId);
+        const vendor = await Vendor.findById(vendorId);
         if (!vendor) {
             return res.status(404).json({ message: "Vendor not found" });
         }
+        // Delete image from cloudinary
+        if (vendor.profileImg?.public_id) {
+            await cloudinary.uploader.destroy(vendor.profileImg.public_id);
+        }
+        const outlets = await Outlet.find({ vendor: vendorId });
+        if (outlets.length > 0) {
+            await Outlet.deleteMany({ vendor: vendorId });
+        }
+        const menuCategories = await MenuCategory.find({ vendor: vendorId });
+        if (menuCategories.length > 0) {
+            await MenuCategory.deleteMany({ vendor: vendorId });
+        }
+        const menuItems = await MenuItem.find({ vendor: vendorId });
+        if (menuItems.length > 0) {
+            await MenuItem.deleteMany({ vendor: vendorId });
+        }
+        await Vendor.findByIdAndDelete(vendorId);
         res.status(200).json({ message: "Vendor deleted successfully", vendor });
     } catch (error) {
         console.error(error);

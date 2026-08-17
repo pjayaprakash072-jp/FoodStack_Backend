@@ -16,9 +16,15 @@ const outletSchema = new mongoose.Schema(
             type:String,
             default:""
         },
-        image:{
-            type:String,
-            default:""
+        image: {
+            url: {
+                type: String,
+                default: ''
+            },
+            public_id: {
+                type: String,
+                default: ''
+            }
         },
         phone:{
             type:String,

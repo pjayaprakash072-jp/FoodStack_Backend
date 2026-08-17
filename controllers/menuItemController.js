@@ -23,7 +23,14 @@ const createMenuItem = async (req, res) => {
         if (!outletId) {
             return res.status(404).json({ message: "Outlet not found" });
         }
-        const image = req.file ? req.file.path : "";
+        const image = req.file 
+        ?{
+            url:req.file.path,
+            public_id:req.file.filename
+        }:{
+            url:"",
+            public_id:""
+        }
         const newMenuItem = new MenuItem({
             outlet: outletId,
             category: categoryId,
@@ -56,8 +63,8 @@ const getAllMenuItems = async (req, res) => {
 };
 
 const getMenuItemById = async (req, res) => {
-    const menuItemId = req.params.menuItemId;
     try {
+        const menuItemId = req.params.menuItemId;
         const menuItem = await MenuItem.findById(menuItemId);
         if (!menuItem) {
             return res.status(404).json({ message: "Menu item not found" });
@@ -70,8 +77,8 @@ const getMenuItemById = async (req, res) => {
 };
 
 const getMenuitemsByOutlet = async (req, res) => {
-    const outletId = req.params.outletId;
     try {
+        const outletId = req.params.outletId;
         const menuItems = await MenuItem.find({ outlet: outletId });
         if (!menuItems) {
             return res.status(404).json({ message: "Menu items not found" });
@@ -84,8 +91,8 @@ const getMenuitemsByOutlet = async (req, res) => {
 }
 
 const getMenuItemsByCategory = async (req, res) => {
-    const categoryId = req.params.categoryId;
     try {
+        const categoryId = req.params.categoryId;
         const menuItems = await MenuItem.find({ category: categoryId });
         if (!menuItems) {
             return res.status(404).json({ message: "Menu items not found" });
@@ -98,8 +105,8 @@ const getMenuItemsByCategory = async (req, res) => {
 }
 
 const updateMenuItem = async (req, res) => {
-    const menuItemId = req.params.menuItemId;
     try{
+        const menuItemId = req.params.menuItemId;
         const menuItem = await MenuItem.findByIdAndUpdate(menuItemId,req.body,{new:true,runValidators:true});
         if(!menuItem){
             return res.status(404).json({message:"Menu item not found"});
@@ -113,12 +120,17 @@ const updateMenuItem = async (req, res) => {
 }
 
 const deleteMenuItem = async (req, res) => {
-    const menuItemId = req.params.menuItemId;
     try{
-        const menuItem = await MenuItem.findByIdAndDelete(menuItemId);
+        const menuItemId = req.params.menuItemId;
+        const menuItem = await MenuItem.findById(menuItemId);
         if(!menuItem){
             return res.status(404).json({message:"Menu item not found"});
         }
+        //Delete the image from cloudinary
+        if(menuItem.image?.public_id){
+            await cloudinary.uploader.destroy(menuItem.image.public_id);
+        }
+        await MenuItem.findByIdAndDelete(menuItemId);
         res.status(200).json({message:"Menu item deleted successfully",menuItem})
     }
     catch (err) {

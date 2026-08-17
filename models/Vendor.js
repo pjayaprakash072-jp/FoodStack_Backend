@@ -26,8 +26,14 @@ const vendorSchema = new mongoose.Schema(
             default:""
         },
         profileImg:{
-            type:String,
-            default:""
+            url: {
+                type: String,
+                default: ''
+            },
+            public_id: {
+                type: String,
+                default: ''
+            }
         },
         status:{
             type:String,

@@ -9,5 +9,5 @@ router.get('/outlet/:outletId',menuItemController.getMenuitemsByOutlet);
 router.get('/category/:categoryId',menuItemController.getMenuItemsByCategory);
 router.put('/update/:menuItemId',upload.single('image'),menuItemController.updateMenuItem);
 router.delete('/delete/:menuItemId',menuItemController.deleteMenuItem);
-router.get('/:menuItemId',menuItemController.getMenuItemById);
+router.get('/get/:menuItemId',menuItemController.getMenuItemById);
 module.exports = router;

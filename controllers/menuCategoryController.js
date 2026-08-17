@@ -1,5 +1,6 @@
 const MenuCategory = require('../models/MenuCategory');
 const Outlet = require('../models/Outlet');
+const MenuItem = require('../models/MenuItem');
 
 
 const createMenuCategory = async(req,res)=>{
@@ -17,7 +18,14 @@ const createMenuCategory = async(req,res)=>{
         if(!outlet){
             return res.status(404).json({message:"Outlet not found"});
         }
-        const image = req.file ? req.file.path : "";
+        const image = req.file 
+        ?{
+            url:req.file.path,
+            public_id:req.file.filename
+        }:{
+            url:"",
+            public_id:""
+        }
         const menuCategory = new MenuCategory({
             outlet:outletId,
             name,
@@ -95,10 +103,20 @@ const updateMenuCategory = async(req,res)=>{
 const deleteMenuCategory = async(req,res)=>{
     const menuCategoryId = req.params.id;
     try{
-        const menuCategory = await MenuCategory.findByIdAndDelete(menuCategoryId);
+        const menuCategory = await MenuCategory.findById(menuCategoryId);
         if(!menuCategory){
             return res.status(404).json({message:"Menu category not found"});
         }
+        //Delete image from cloudinary
+        if(menuCategory.image?.public_id){
+            await cloudinary.uploader.destroy(menuCategory.image.public_id);
+        }
+        //Delete all menu items associated with this category
+        const menuItems = await MenuItem.find({menuCategory:menuCategoryId});
+        if(menuItems.length>0){
+            await MenuItem.deleteMany({menuCategory:menuCategoryId});
+        }
+        await MenuCategory.findByIdAndDelete(menuCategoryId);
         res.status(200).json({message:"Menu category deleted successfully",menuCategory});
     } catch (error) {
         console.error(error);

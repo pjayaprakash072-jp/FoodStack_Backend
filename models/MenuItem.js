@@ -31,8 +31,14 @@ const menuItemSchema = new mongoose.Schema(
             min: 0
         },
         image: {
-            type: String,
-            default: '' 
+            url: {
+                type: String,
+                default: ''
+            },
+            public_id: {
+                type: String,
+                default: ''
+            }
         },
         discount: {
             type: Number,

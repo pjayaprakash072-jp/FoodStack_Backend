@@ -1,5 +1,7 @@
 const Outlet = require('../models/Outlet');
 const Vendor = require('../models/Vendor');
+const MenuCategory = require('../models/MenuCategory');
+const MenuItem = require('../models/MenuItem');
 
 const createOutlet = async (req, res) => {
     try {
@@ -22,7 +24,14 @@ const createOutlet = async (req, res) => {
             return res.status(404).json({ message: "Vendor not found" });
         }
         
-        const image = req.file ? req.file.path : "";
+        const image = req.file 
+        ? {
+            url:req.file.path,
+            public_id:req.file.filename
+        }:{
+            url:"",
+            public_id:""
+        }
         const newOutlet = new Outlet({
             name,
             description,
@@ -59,7 +68,7 @@ const getAllOutlets = async (req, res) => {
 
 const getOutletById = async (req, res) => {
     try {
-        const outletId = req.params.id; 
+        const outletId = outlerid; 
         const outlet = await Outlet.findById(outletId).populate('vendor', 'name email phone');
         if (!outlet) {
             return res.status(404).json({ message: "Outlet not found" });
@@ -90,7 +99,7 @@ const updateOutlet = async (req, res) => {
     try {
 
         const outlet = await Outlet.findByIdAndUpdate(
-            req.params.id, 
+            outlerid, 
             req.body, 
             { returnDocument: 'after',
                 
@@ -108,11 +117,26 @@ const updateOutlet = async (req, res) => {
 
 
 const deleteOutlet = async (req, res) => {
+    
     try {
-        const outlet = await Outlet.findByIdAndDelete(req.params.id);
+        const outletid = req.params.id;
+        const outlet = await Outlet.findById(outlerid);
         if (!outlet) {
             return res.status(404).json({ message: "Outlet not found" });
         }
+        //Delete image from cloudinary
+        if (outlet.image?.public_id) {
+            await cloudinary.uploader.destroy(outlet.image.public_id);
+        }
+        const menuCategories = await MenuCategory.find({ outlet: outlerid });
+        if (menuCategories.length > 0) {
+            await MenuCategory.deleteMany({ outlet: outlerid });
+        }
+        const menuItems = await MenuItem.find({ outlet: outlerid });
+        if (menuItems.length > 0) {
+            await MenuItem.deleteMany({ outlet: outlerid });
+        }
+        await Outlet.findByIdAndDelete(outlerid);
         res.status(200).json({ message: "Outlet deleted successfully", outlet });
     } catch (error) {
         console.error(error);
