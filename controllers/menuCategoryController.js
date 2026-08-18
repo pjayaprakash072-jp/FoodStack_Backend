@@ -141,6 +141,12 @@ const deleteMenuCategory = async(req,res)=>{
             if(item.image?.public_id){
                 await cloudinary.uploader.destroy(item.image.public_id);
             }
+            await Outlet.findByIdAndUpdate(
+                item.outlet,
+                {
+                    $pull:{menuItems:item._id}
+                }
+            )
         }
         await MenuItem.deleteMany({category:menuCategoryId});
 

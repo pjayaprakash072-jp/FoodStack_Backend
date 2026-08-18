@@ -57,4 +57,7 @@ API's:
 
 
 
-// TESTING IS PENDING.... include code for pull id when delete.
+// Pending ... 
+
+when deleting the category its all item sould be delete ✅
+but it is not removing the id's in outlet.menuItems see this ❌
