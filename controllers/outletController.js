@@ -147,16 +147,20 @@ const deleteOutlet = async (req, res) => {
 
 
         const menuCategories = await MenuCategory.find({ outlet: outletid });
-        if (menuCategories.length > 0) {
-            await MenuCategory.deleteMany({ outlet: outletid });
+        for(const category of menuCategories){
+            if(category.image?.public_id){
+                await cloudinary.uploader.destroy(category.image.public_id);
+            }
         }
-
-
+        await MenuCategory.deleteMany({outlet:outletid});
         const menuItems = await MenuItem.find({ outlet: outletid });
-        if (menuItems.length > 0) {
-            await MenuItem.deleteMany({ outlet: outletid });
+        for(const item of menuItems){
+            if(item.image?.public_id){
+                await cloudinary.uploader.destroy(item.image.public_id);
+            }
         }
-
+        await MenuItem.deleteMany({outlet:outletid})
+        // Remove outlet from vendor's outlets array
         await Vendor.findByIdAndUpdate(
             outlet.vendor,
             {

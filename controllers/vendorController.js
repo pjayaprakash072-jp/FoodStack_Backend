@@ -135,21 +135,26 @@ const deleteVendor = async (req, res) => {
         if (!vendor) {
             return res.status(404).json({ message: "Vendor not found" });
         }
-        // Delete image from cloudinary
-        if (vendor.profileImg?.public_id) {
+        const outlets = await Outlet.find({vendor:vendorId});
+        for(const outlet of outlets){
+            const categories = await MenuCategory.find({outlet:outlet._id});
+            for(const category of categories){
+                const menuItems = await MenuItem.find({category:category._id});
+                for(const item of menuItems){
+                    if(item.image?.public_id){
+                        await cloudinary.uploader.destroy(item.image.public_id);
+                    }
+                }
+                await MenuItem.deleteMany({category:category._id});
+                if(category.image?.public_id){
+                    await cloudinary.uploader.destroy(category.image.public_id);
+                }
+                await MenuCategory.deleteMany({outlet:outlet._id});
+            }
+        }
+        await Outlet.deleteMany({vendor:vendorId});
+        if(vendor.profileImg?.public_id){
             await cloudinary.uploader.destroy(vendor.profileImg.public_id);
-        }
-        const outlets = await Outlet.find({ vendor: vendorId });
-        if (outlets.length > 0) {
-            await Outlet.deleteMany({ vendor: vendorId });
-        }
-        const menuCategories = await MenuCategory.find({ vendor: vendorId });
-        if (menuCategories.length > 0) {
-            await MenuCategory.deleteMany({ vendor: vendorId });
-        }
-        const menuItems = await MenuItem.find({ vendor: vendorId });
-        if (menuItems.length > 0) {
-            await MenuItem.deleteMany({ vendor: vendorId });
         }
         await Vendor.findByIdAndDelete(vendorId);
         res.status(200).json({ message: "Vendor deleted successfully", vendor });

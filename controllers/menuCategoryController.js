@@ -137,9 +137,12 @@ const deleteMenuCategory = async(req,res)=>{
 
         //Delete all menu items associated with this category
         const menuItems = await MenuItem.find({category:menuCategoryId});
-        if(menuItems.length>0){
-            await MenuItem.deleteMany({category:menuCategoryId});
+        for(const item of menuItems){
+            if(item.image?.public_id){
+                await cloudinary.uploader.destroy(item.image.public_id);
+            }
         }
+        await MenuItem.deleteMany({category:menuCategoryId});
 
         //Delete the menu category from the outlet's menuCategories array
         await Outlet.findByIdAndUpdate(
