@@ -2,17 +2,6 @@ const mongoose = require('mongoose')
 const MenuItem = require('../models/MenuItem')
 const menuCategorySchema = new mongoose.Schema(
     {
-        outlet:{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: "Outlet",
-            required: true
-        },
-        menuItems:[
-            {
-                type:mongoose.Schema.Types.ObjectId,
-                ref : "MenuItem"
-            }
-        ],
         name:{
             type:String,
             required:true,
@@ -21,6 +10,14 @@ const menuCategorySchema = new mongoose.Schema(
         description:{
             type:String,
             default:""
+        },
+        displayOrder:{
+            type:Number,
+            default:0
+        },
+        iaActive:{  
+            type:Boolean,
+            default:true
         },
         image: {
             url: {
@@ -32,14 +29,17 @@ const menuCategorySchema = new mongoose.Schema(
                 default: ''
             }
         },
-        displayOrder:{
-            type:Number,
-            default:0
+        outlet:{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: "Outlet",
+            required: true
         },
-        iaActive:{  
-            type:Boolean,
-            default:true
-        }
+        menuItems:[
+            {
+                type:mongoose.Schema.Types.ObjectId,
+                ref : "MenuItem"
+            }
+        ]
     },{
         timestamps:true
     }

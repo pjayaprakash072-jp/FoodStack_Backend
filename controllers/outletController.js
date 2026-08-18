@@ -131,23 +131,38 @@ const deleteOutlet = async (req, res) => {
     
     try {
         const outletid = req.params.id;
-        const outlet = await Outlet.findById(outlerid);
+
+
+        const outlet = await Outlet.findById(outletid);
         if (!outlet) {
             return res.status(404).json({ message: "Outlet not found" });
         }
+
+
         //Delete image from cloudinary
         if (outlet.image?.public_id) {
             await cloudinary.uploader.destroy(outlet.image.public_id);
         }
-        const menuCategories = await MenuCategory.find({ outlet: outlerid });
+
+
+        const menuCategories = await MenuCategory.find({ outlet: outletid });
         if (menuCategories.length > 0) {
-            await MenuCategory.deleteMany({ outlet: outlerid });
+            await MenuCategory.deleteMany({ outlet: outletid });
         }
-        const menuItems = await MenuItem.find({ outlet: outlerid });
+
+
+        const menuItems = await MenuItem.find({ outlet: outletid });
         if (menuItems.length > 0) {
-            await MenuItem.deleteMany({ outlet: outlerid });
+            await MenuItem.deleteMany({ outlet: outletid });
         }
-        await Outlet.findByIdAndDelete(outlerid);
+
+        await Vendor.findByIdAndUpdate(
+            Outlet.vendor,
+            {
+                $pull: { outlets: outletid }
+            }
+        )
+        await Outlet.findByIdAndDelete(outletid);
         res.status(200).json({ message: "Outlet deleted successfully", outlet });
     } catch (error) {
         console.error(error);

@@ -121,18 +121,32 @@ const deleteMenuCategory = async(req,res)=>{
     const menuCategoryId = req.params.id;
     try{
         const menuCategory = await MenuCategory.findById(menuCategoryId);
+
+
         if(!menuCategory){
             return res.status(404).json({message:"Menu category not found"});
         }
+
+
         //Delete image from cloudinary
         if(menuCategory.image?.public_id){
             await cloudinary.uploader.destroy(menuCategory.image.public_id);
         }
+
+
         //Delete all menu items associated with this category
         const menuItems = await MenuItem.find({menuCategory:menuCategoryId});
         if(menuItems.length>0){
             await MenuItem.deleteMany({menuCategory:menuCategoryId});
         }
+
+        //Delete the menu category from the outlet's menuCategories array
+        await Outlet.findByIdAndUpdate(
+            menuCategory.outlet,
+            {
+                $pull:{menuCategories:menuCategoryId}
+            }
+        )
         await MenuCategory.findByIdAndDelete(menuCategoryId);
         res.status(200).json({message:"Menu category deleted successfully",menuCategory});
     } catch (error) {

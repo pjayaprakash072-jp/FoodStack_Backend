@@ -3,16 +3,6 @@ const mongoose = require('mongoose');
 
 const menuItemSchema = new mongoose.Schema(
     {
-        outlet:{
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'Outlet',
-            required: true
-        },
-        category: {
-            type: mongoose.Schema.Types.ObjectId,
-            ref: 'MenuCategory',
-            required: true
-        },
         name: {
             type: String,
             required: true
@@ -29,16 +19,6 @@ const menuItemSchema = new mongoose.Schema(
             type: Number,
             default: 0,
             min: 0
-        },
-        image: {
-            url: {
-                type: String,
-                default: ''
-            },
-            public_id: {
-                type: String,
-                default: ''
-            }
         },
         discount: {
             type: Number,
@@ -63,8 +43,27 @@ const menuItemSchema = new mongoose.Schema(
             type: String,
             enum: ['Active', 'Inactive'],
             default: 'Active'
+        },
+        image: {
+            url: {
+                type: String,
+                default: ''
+            },
+            public_id: {
+                type: String,
+                default: ''
+            }
+        },
+        outlet:{
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'Outlet',
+            required: true
+        },
+        category: {
+            type: mongoose.Schema.Types.ObjectId,
+            ref: 'MenuCategory',
+            required: true
         }
-
     },
     {
         timestamps: true

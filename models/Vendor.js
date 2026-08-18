@@ -2,12 +2,6 @@ const mongoose = require('mongoose')
 const Outlet = require('../models/Outlet')
 const vendorSchema = new mongoose.Schema(
     {
-        outlets:[
-            {
-                type:mongoose.Schema.Types.ObjectId,
-                ref :"Outlet"
-            }
-        ],
         name:{
             type:String,
             required: true
@@ -31,6 +25,11 @@ const vendorSchema = new mongoose.Schema(
             type:String,
             default:""
         },
+        status:{
+            type:String,
+            enum:["active","inactive","suspended"],
+            default:"active"
+        },
         profileImg:{
             url: {
                 type: String,
@@ -41,11 +40,12 @@ const vendorSchema = new mongoose.Schema(
                 default: ''
             }
         },
-        status:{
-            type:String,
-            enum:["active","inactive","suspended"],
-            default:"active"
-        }
+        outlets:[
+            {
+                type:mongoose.Schema.Types.ObjectId,
+                ref :"Outlet"
+            }
+        ]
     },
     {
         timeseries:true

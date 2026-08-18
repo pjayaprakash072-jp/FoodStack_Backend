@@ -143,14 +143,33 @@ const updateMenuItem = async (req, res) => {
 const deleteMenuItem = async (req, res) => {
     try{
         const menuItemId = req.params.menuItemId;
+
         const menuItem = await MenuItem.findById(menuItemId);
+
         if(!menuItem){
             return res.status(404).json({message:"Menu item not found"});
         }
+
+
         //Delete the image from cloudinary
         if(menuItem.image?.public_id){
             await cloudinary.uploader.destroy(menuItem.image.public_id);
         }
+
+        //Delete the menu item from the outlet's menuItems array
+        await Outlet.findByIdAndUpdate(
+            menuItem.outlet,
+            {
+                $pull:{menuItems:menuItemId}
+            }
+        )
+        // Delete the menu item from the menu category's menuItems array
+        await MenuCategory.findByIdAndUpdate(
+            menuItem.menuCategory,
+            {
+                $pull:{menuItems:menuItemId}
+            }
+        )
         await MenuItem.findByIdAndDelete(menuItemId);
         res.status(200).json({message:"Menu item deleted successfully",menuItem})
     }
