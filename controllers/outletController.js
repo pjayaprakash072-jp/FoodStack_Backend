@@ -2,6 +2,7 @@ const Outlet = require('../models/Outlet');
 const Vendor = require('../models/Vendor');
 const MenuCategory = require('../models/MenuCategory');
 const MenuItem = require('../models/MenuItem');
+const cloudinary = require('../config/cloudinary');
 
 const createOutlet = async (req, res) => {
     try {
@@ -157,7 +158,7 @@ const deleteOutlet = async (req, res) => {
         }
 
         await Vendor.findByIdAndUpdate(
-            Outlet.vendor,
+            outlet.vendor,
             {
                 $pull: { outlets: outletid }
             }

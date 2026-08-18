@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 const Outlet = require('../models/Outlet');
 const MenuCategory = require('../models/MenuCategory');
 const MenuItem = require('../models/MenuItem');
-
+const cloudinary = require('../config/cloudinary');
 
 const createVendor = async (req, res) => {
     try {
@@ -110,9 +110,17 @@ const updateVendor = async (req, res) => {
             }
         }
         // update otehr values
-        Object.assign(vendor,req.body);
+        const {password, ...otherFields} = req.body;
+        Object.assign(vendor,otherFields);
+        if(password){
+            const hashedPassword = await bcrypt.hash(password, 10);
+            vendor.password = hashedPassword;
+        }
         await vendor.save();
-        res.status(200).json({ message: "Vendor updated successfully", vendor });
+        // remove password from response
+        const vendorResponse = vendor.toObject();
+        delete vendorResponse.password;
+        res.status(200).json({ message: "Vendor updated successfully", vendor:vendorResponse });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Internal server error", error: error.message });

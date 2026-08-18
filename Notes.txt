@@ -22,7 +22,7 @@ API's:
 
 ✅    3. GetAllVendors -> localhost:5000/vendor/getall 
 ✅    4. Get one vendor -> localhost:5000/vendor/get/:id
-    5. Update vendor -> localhost:5000/vendor/update/:id
+✅    5. Update vendor -> localhost:5000/vendor/update/:id
     6. delete vendor -> localhost:5000/vendor/delete/:id
 
 
@@ -32,7 +32,7 @@ API's:
 ✅    2. All outlets -> localhost:5000/outlet/getall
 ✅    3. Single Outlet ->localhost:5000/outlet/get/:id
 ✅    4. outlets by Vendor -> localhost:5000/outlet/vendor/:vendorid
-    5. Update -> localhost:5000/outlet/update/:id  <=====>   token needed.
+✅    5. Update -> localhost:5000/outlet/update/:id  <=====>   token needed.
     6. delete -> localhost:5000/outlet/delete/:id  <=====>   token needed.
 
 3. Menu-Category
@@ -41,19 +41,19 @@ API's:
 ✅    2. MenuCategories by Outlet -> localhost:5000/menu-category/outlet/:outletid
 ✅    3. All Categories -> localhost:5000/menu-category/getall
 ✅    4. Single Category -> localhost:5000/menu-category/get/:id 
-    5. Update -> localhost:5000/menu-category/update/:id 
-    6. delete -> localhost:5000/menu-category/delete/:id 
+✅    5. Update -> localhost:5000/menu-category/update/:id 
+✅    6. delete -> localhost:5000/menu-category/delete/:id 
 
 
 4. MenuItem
 ------------
 ✅    1. Create -> localhost:5000/menu-item/add/:categoryid
 ✅    2. All Items -> localhost:5000/menu-item/getall
-✅    3. Items by Outler -> localhost:5000/menu-item/outlet/:outletid 
+✅    3. Items by Outlet -> localhost:5000/menu-item/outlet/:outletid 
 ✅    4. Items by Category -> localhost:5000/menu-item/category/:categoryid
 ✅    5. single Item -> localhost:5000/menu-item/get/:meuItemId
-    6. update -> localhost:5000/menu-item/update/:munuItemId
-    7. delete -> localhost:5000/menu-item/delete/menuItemId.
+✅    6. update -> localhost:5000/menu-item/update/:munuItemId
+✅    7. delete -> localhost:5000/menu-item/delete/:menuItemId.
 
 
 

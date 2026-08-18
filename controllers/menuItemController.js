@@ -1,6 +1,8 @@
 const MenuItem = require("../models/MenuItem");
 const Category = require("../models/MenuCategory");
 const Outlet = require('../models/Outlet')
+const cloudinary = require('../config/cloudinary');
+
 const createMenuItem = async (req, res) => {
     const categoryId = req.params.categoryId;
     try {
@@ -164,8 +166,8 @@ const deleteMenuItem = async (req, res) => {
             }
         )
         // Delete the menu item from the menu category's menuItems array
-        await MenuCategory.findByIdAndUpdate(
-            menuItem.menuCategory,
+        await Category.findByIdAndUpdate(
+            menuItem.category,
             {
                 $pull:{menuItems:menuItemId}
             }

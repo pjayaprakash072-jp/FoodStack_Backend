@@ -1,6 +1,7 @@
 const MenuCategory = require('../models/MenuCategory');
 const Outlet = require('../models/Outlet');
 const MenuItem = require('../models/MenuItem');
+const cloudinary = require('../config/cloudinary');
 
 
 const createMenuCategory = async(req,res)=>{
@@ -135,9 +136,9 @@ const deleteMenuCategory = async(req,res)=>{
 
 
         //Delete all menu items associated with this category
-        const menuItems = await MenuItem.find({menuCategory:menuCategoryId});
+        const menuItems = await MenuItem.find({category:menuCategoryId});
         if(menuItems.length>0){
-            await MenuItem.deleteMany({menuCategory:menuCategoryId});
+            await MenuItem.deleteMany({category:menuCategoryId});
         }
 
         //Delete the menu category from the outlet's menuCategories array
