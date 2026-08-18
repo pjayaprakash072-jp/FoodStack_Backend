@@ -19,6 +19,9 @@ app.use("/vendor", vendorRoutes);
 app.use("/outlet", outletRoutes);
 app.use("/menu-category", menuCategoryRoutes);
 app.use("/menu-item", menuItemRoutes);
+app.get('/',(req,res)=>{
+    res.send("Welcome to FoodStack!")
+})
 
 
 const PORT = process.env.PORT || 5000;  
