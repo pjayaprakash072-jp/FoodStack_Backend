@@ -94,6 +94,7 @@ const getVendorById = async (req, res) => {
 const updateVendor = async (req, res) => {
     try {
         const vendorId = req.params.id;
+        console.log(vendorId);
         const vendor = await Vendor.findById(vendorId);
         if (!vendor) {
             return res.status(404).json({ message: "Vendor not found" });
@@ -122,7 +123,7 @@ const updateVendor = async (req, res) => {
         delete vendorResponse.password;
         res.status(200).json({ message: "Vendor updated successfully", vendor:vendorResponse });
     } catch (error) {
-        console.error(error);
+        // console.error(error);
         res.status(500).json({ message: "Internal server error", error: error.message });
     }
 };
