@@ -170,10 +170,12 @@ const deleteMenuCategory = async(req,res)=>{
 
 const getMenuCategoriesByVendor = async(req,res)=>{
     const vendorId = req.params.vendorId;
+    
     try{
         const outlets = await Outlet.find({vendor:vendorId});
         const outletIds = outlets.map(outlet=>outlet._id);
         const menuCategories = await MenuCategory.find({outlet:{$in:outletIds}}).populate('outlet',"name city area");
+        
         res.status(200).json({message:"Menu categories fetched successfully",menuCategories});
     }catch(error){
         console.error(error);

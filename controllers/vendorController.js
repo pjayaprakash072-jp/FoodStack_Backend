@@ -94,7 +94,7 @@ const getVendorById = async (req, res) => {
 const updateVendor = async (req, res) => {
     try {
         const vendorId = req.params.id;
-        console.log(vendorId);
+        // console.log(vendorId);
         const vendor = await Vendor.findById(vendorId);
         if (!vendor) {
             return res.status(404).json({ message: "Vendor not found" });
