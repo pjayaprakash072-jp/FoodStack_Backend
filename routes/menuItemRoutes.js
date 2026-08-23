@@ -4,6 +4,7 @@ const upload = require('../middleware/upload');
 const router = require('express').Router();
 
 router.post('/add/:categoryId',upload.single('image'),menuItemController.createMenuItem);
+router.get('/vendor/:vendorId',menuItemController.getAllMenuItemsByVendor);
 router.get('/getall',menuItemController.getAllMenuItems);
 router.get('/outlet/:outletId',menuItemController.getMenuitemsByOutlet);
 router.get('/category/:categoryId',menuItemController.getMenuItemsByCategory);

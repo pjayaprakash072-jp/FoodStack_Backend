@@ -4,22 +4,7 @@ API's:
 1. Vendor
 ---------
 ✅    1. Create -> localhost:5000/vendor/create 
-            {
-                "name": "jayaprakash",
-                "email": "jaya@gmail.com",
-                "password": "jaya",
-                "businessName": "jp",
-                "phone": "9177170149",
-                "status": "inactive"
-            }
-
 ✅    2. Login -> localhost:5000/vendor/login 
-
-            {
-                "email": "jaya@gmail.com",
-                "password": "jaya"
-            }
-
 ✅    3. GetAllVendors -> localhost:5000/vendor/getall 
 ✅    4. Get one vendor -> localhost:5000/vendor/get/:id
 ✅    5. Update vendor -> localhost:5000/vendor/update/:id
@@ -57,9 +42,3 @@ API's:
 
 
 https://foodstack-backend-fr5y.onrender.com/
-
-
-// Pending ... 
-
-when deleting the category its all item sould be delete ✅
-but it is not removing the id's in outlet.menuItems see this ❌

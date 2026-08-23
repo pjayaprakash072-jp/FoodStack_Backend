@@ -5,6 +5,7 @@ const upload = require('../middleware/upload');
 
 
 router.post('/create/:outletId', upload.single('image'), menuCategoryController.createMenuCategory);
+router.get('/vendor/:vendorId', menuCategoryController.getMenuCategoriesByVendor);
 router.get('/outlet/:outletId', menuCategoryController.getMenuCategoriesByOutlet);
 router.get('/getall', menuCategoryController.getAllMenuCategories);
 router.get('/get/:id', menuCategoryController.getMenuCategoryById);

@@ -2,6 +2,7 @@ const MenuItem = require("../models/MenuItem");
 const Category = require("../models/MenuCategory");
 const Outlet = require('../models/Outlet')
 const cloudinary = require('../config/cloudinary');
+const Vendor = require('../models/Vendor')
 
 const createMenuItem = async (req, res) => {
     const categoryId = req.params.categoryId;
@@ -181,6 +182,24 @@ const deleteMenuItem = async (req, res) => {
     }
 }
 
+const getAllMenuItemsByVendor = async (req, res) => {
+    try{
+        const vendorId = req.params.vendorId;
+        const vendor = await Vendor.findById(vendorId);
+        if(!vendor){
+            return res.status(404).json({message:"Vendor not found"});
+        }
+        const outlets = await Outlet.find({vendor:vendorId});
+        const outletIds = outlets.map(outlet=>outlet._id);
+        const menuItems = await MenuItem.find({outlet:{$in:outletIds}}).populate('outlet','name city area').populate('category','name');
+        res.status(200).json({message:"Menu items fetched successfully",menuItems});
+     }
+     catch (err) {
+        console.error(err);
+        res.status(500).json({ message: "Internal server error",error:err.message });
+    }
+
+}
 module.exports = {
     createMenuItem,
     getMenuItemById,
@@ -188,7 +207,8 @@ module.exports = {
     getMenuItemsByCategory,
     updateMenuItem,
     deleteMenuItem,
-    getAllMenuItems
+    getAllMenuItems,
+    getAllMenuItemsByVendor
 };
 
 
