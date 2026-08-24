@@ -5,6 +5,7 @@ const cloudinary = require('../config/cloudinary');
 const Vendor = require('../models/Vendor')
 
 const createMenuItem = async (req, res) => {
+    console.log(req.body)
     const categoryId = req.params.categoryId;
     try {
         
@@ -74,7 +75,7 @@ const getAllMenuItems = async (req, res) => {
 const getMenuItemById = async (req, res) => {
     try {
         const menuItemId = req.params.menuItemId;
-        const menuItem = await MenuItem.findById(menuItemId);
+        const menuItem = await MenuItem.findById(menuItemId).populate('outlet' , 'name').populate('category','name')
         if (!menuItem) {
             return res.status(404).json({ message: "Menu item not found" });
         }
@@ -114,6 +115,7 @@ const getMenuItemsByCategory = async (req, res) => {
 }
 
 const updateMenuItem = async (req, res) => {
+    console.log(req.body);
     try{
         const menuItemId = req.params.menuItemId;
         const menuItem = await MenuItem.findById(menuItemId);
