@@ -5,7 +5,8 @@ const Outlet = require('../models/Outlet');
 const MenuCategory = require('../models/MenuCategory');
 const MenuItem = require('../models/MenuItem');
 const cloudinary = require('../config/cloudinary');
-
+const {sendWelcomeEmail}  =  require('../utils/email')
+ 
 const createVendor = async (req, res) => {
     try {
         const{
@@ -38,6 +39,11 @@ const createVendor = async (req, res) => {
         });
 
         await vendor.save();
+        try {
+            await sendWelcomeEmail(email,name);
+        } catch (error) {
+            console.error("Email send failed" , error)
+        }
 
         res.status(201).json({ message: "Vendor created successfully", vendor });
     }

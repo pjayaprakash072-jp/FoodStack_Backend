@@ -87,10 +87,11 @@ const getOutletsByVendorId = async (req, res) => {
     try {
         const vendorId = req.params.vendorId;
         const outlets = await Outlet.find({ vendor: vendorId }).populate('vendor', 'name email phone');
-        if (!outlets || outlets.length === 0) {
-            return res.status(404).json({ message: "No outlets found for this vendor" });
-        }
-        res.status(200).json({ message: "Outlets retrieved successfully", outlets });
+        res.status(200).json(
+            {
+                message: outlets.length>0 ? "Outlets retrieved successfully" : "No Outlets found for this vendor", outlets
+            }
+        )
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Internal server error", error: error.message });
