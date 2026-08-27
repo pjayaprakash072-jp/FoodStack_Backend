@@ -42,3 +42,32 @@ API's:
 
 
 https://foodstack-backend-fr5y.onrender.com/
+
+
+Forgot password
+===============
+Vendor clicks "Forgot Password"
+        ↓
+Enters registered email
+        ↓
+Backend finds Vendor
+        ↓
+Generate secure random reset token
+        ↓
+Store HASHED token + expiry in MongoDB
+        ↓
+Send reset link through email
+        ↓
+User clicks link
+        ↓
+React opens /reset-password/:token
+        ↓
+User enters new password and confirm password
+        ↓
+Backend hashes token and verifies it
+        ↓
+Update password
+        ↓
+Delete reset token
+        ↓
+User logs in with new password

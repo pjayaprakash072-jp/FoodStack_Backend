@@ -7,7 +7,7 @@ const MenuItem = require('../models/MenuItem');
 const cloudinary = require('../config/cloudinary');
 const {sendWelcomeEmail, sendForgotPasswordLink}  =  require('../utils/email')
 const crypto = require('crypto')
- 
+
 const createVendor = async (req, res) => {
     try {
         const{
@@ -158,6 +158,9 @@ const deleteVendor = async (req, res) => {
                     await cloudinary.uploader.destroy(category.image.public_id);
                 }
                 await MenuCategory.deleteMany({outlet:outlet._id});
+            }
+            if(outlet.image?.public_id){
+                await cloudinary.uploader.destroy(outlet.image.public_id);
             }
         }
         await Outlet.deleteMany({vendor:vendorId});

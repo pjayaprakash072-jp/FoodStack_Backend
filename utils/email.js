@@ -46,7 +46,7 @@ const sendForgotPasswordLink  = async (email,name , resetURL)=>{
     const mailOptions = {
         from:`"FoodStack" <${process.env.EMAIL_USER}>`,
         to:email,
-        subject:"Welcome to FoodStack 🎉",
+        subject:"Password Reset Link 🎉",
 
         html:
         `
