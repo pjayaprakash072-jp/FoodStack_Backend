@@ -40,6 +40,14 @@ const vendorSchema = new mongoose.Schema(
                 default: ''
             }
         },
+        passwordResetToken:{
+            type:String,
+            default:null
+        },
+        passwordResetTokenExpires:{
+            type:Date,
+            default:null
+        },
         outlets:[
             {
                 type:mongoose.Schema.Types.ObjectId,

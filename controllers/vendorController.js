@@ -5,7 +5,8 @@ const Outlet = require('../models/Outlet');
 const MenuCategory = require('../models/MenuCategory');
 const MenuItem = require('../models/MenuItem');
 const cloudinary = require('../config/cloudinary');
-const {sendWelcomeEmail}  =  require('../utils/email')
+const {sendWelcomeEmail, sendForgotPasswordLink}  =  require('../utils/email')
+const crypto = require('crypto')
  
 const createVendor = async (req, res) => {
     try {
@@ -171,7 +172,111 @@ const deleteVendor = async (req, res) => {
     }
 };
 
+const forgotPassword = async(req,res)=>{
+    try {
+        const {email} = req.body;
+        const vendor = await Vendor.findOne({email})
+        if(!vendor){
+            return res.status(400).json(
+                {
+                    message:"Vendor not found,Please create Account"
+                }
+            )
+        }
 
+        // generate random token
+        const resetToken = crypto.randomBytes(32).toString("hex");
+        // console.log("original token" , resetToken)
+        // hashing token before soting in db
+
+        const hashedToken = crypto.createHash("sha256").update(resetToken).digest("hex")
+
+        vendor.passwordResetToken = hashedToken;
+
+        vendor.passwordResetTokenExpires =   Date.now()+10*60*1000;
+
+
+        await vendor.save({validateBeforeSave:false})
+
+        const resetURL =`${process.env.FRONTEND_URL}/reset-password/${resetToken}`
+
+        await sendForgotPasswordLink(vendor.email,vendor.name,resetURL);
+        return res.status(200).json(
+            {
+                message:"Password reset link is sent!"
+            }
+        )
+    } catch (error) {
+        console.error(error)
+        return res.status(500).json(
+            {
+                message:"Internal server error"
+            }
+        )
+    }
+}
+
+
+const resetPassword = async (req,res)=>{
+    try {
+        const {token} = req.params;
+        const {password} = req.body;
+        if(!password){
+            return res.status(400).json(
+                {
+                    message:"Password is required!"
+                }
+            )
+        }
+
+        // hashed token 
+        const hashedToken = crypto.createHash("sha256").update(token).digest("hex")
+
+        // find vendor by using token + expire
+
+        const vendor = await Vendor.findOne({
+            passwordResetToken :hashedToken,
+            passwordResetTokenExpires:{
+                $gt:Date.now()
+            }
+        })
+
+        if(!vendor){
+            return res.status(400).json(
+                {
+                    message:"Invalid or expired reset Link"
+                }
+            )
+        }
+
+        const hashPassword = await bcrypt.hash(password,10);
+
+        vendor.password = hashPassword;
+
+
+        // remove resetToken
+
+        vendor.passwordResetToken = null;
+
+        vendor.passwordResetTokenExpires = null;
+
+
+        await vendor.save();
+
+        res.status(200).json(
+            {
+                message:"password reset successfully!"
+            }
+        )
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json(
+            {
+                message:"Internal server Errro."
+            }
+        )
+    }
+}
 
 module.exports = {
     createVendor,
@@ -179,6 +284,8 @@ module.exports = {
     getVendorById,
     updateVendor,
     deleteVendor,
-    loginVendor
+    loginVendor,
+    forgotPassword,
+    resetPassword
 };
 

@@ -41,4 +41,49 @@ const sendWelcomeEmail = async (email, name) =>{
     };
     await transporter.sendMail(mailOptions)
 }
-module.exports = {sendWelcomeEmail}
+
+const sendForgotPasswordLink  = async (email,name , resetURL)=>{
+    const mailOptions = {
+        from:`"FoodStack" <${process.env.EMAIL_USER}>`,
+        to:email,
+        subject:"Welcome to FoodStack 🎉",
+
+        html:
+        `
+                <h2>Reset Your FoodStack Password</h2>
+
+                <p>Hello ${name},</p>
+
+                <p>
+                    You requested to reset your FoodStack password.
+                </p>
+
+                <p>
+                    Click the button below to create a new password.
+                </p>
+
+                <a href="${resetURL}"
+                    style="
+                        display:inline-block;
+                        padding:12px 20px;
+                        background:#000;
+                        color:#fff;
+                        text-decoration:none;
+                        border-radius:5px;
+                "> 
+                    Reset Password
+                </a>
+
+                <p>
+                    This link will expire in 10 minutes.
+                </p>
+
+                <p>
+                    If you did not request this, you can safely ignore
+                    this email.
+                </p>
+            `
+    }
+    await transporter.sendMail(mailOptions);
+}
+module.exports = {sendWelcomeEmail , sendForgotPasswordLink}
