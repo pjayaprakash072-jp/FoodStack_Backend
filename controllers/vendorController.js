@@ -58,7 +58,7 @@ const googleLogin = async(req,res)=>{
         )
 
         if(!vendor){
-            const newvendor = new Vendor(
+            vendor = new Vendor(
                 {
                     name,
                     email:email.toLowerCase(),
@@ -67,7 +67,7 @@ const googleLogin = async(req,res)=>{
                     
                 }
             )
-            await newvendor.save();
+            await vendor.save();
         }else{
             if(!vendor.googleId){
                 vendor.googleId = googleId;
@@ -131,7 +131,8 @@ const createVendor = async (req, res) => {
             password: hashedPassword,
             phone,
             businessName,
-            profileImg
+            profileImg,
+            authProvider: "local"
         });
 
         await vendor.save();

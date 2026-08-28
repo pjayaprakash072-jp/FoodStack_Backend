@@ -15,11 +15,15 @@ const vendorSchema = new mongoose.Schema(
         },
         password:{
             type:String,
-            required:true
+            required: function(){
+                return this.authProvider === "local"
+            }
         },
         phone:{
             type:String,
-            required:true
+            required: function(){
+                return this.authProvider === "local"
+            }
         },
         businessName:{
             type:String,
