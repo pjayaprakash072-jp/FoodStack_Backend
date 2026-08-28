@@ -5,7 +5,7 @@ const cloudinary = require('../config/cloudinary');
 const Vendor = require('../models/Vendor')
 
 const createMenuItem = async (req, res) => {
-    console.log(req.body)
+    // console.log(req.body)
     const categoryId = req.params.categoryId;
     try {
         

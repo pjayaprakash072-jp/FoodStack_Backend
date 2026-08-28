@@ -1,6 +1,6 @@
 const express = require("express");
 const router = express.Router();
-const { createVendor, getAllVendors, getVendorById, updateVendor, deleteVendor,loginVendor,forgotPassword,resetPassword} = require("../controllers/vendorController");
+const { createVendor, getAllVendors, getVendorById, updateVendor, deleteVendor,loginVendor,forgotPassword,resetPassword,googleLogin} = require("../controllers/vendorController");
 
 const upload = require("../middleware/upload")
 
@@ -12,5 +12,6 @@ router.delete("/delete/:id", deleteVendor);
 router.post("/login", loginVendor);
 router.post("/forgot-password",forgotPassword);
 router.post("/reset-password/:token",resetPassword)
+router.post("/google-login",googleLogin)
 
 module.exports = router;

@@ -7,7 +7,102 @@ const MenuItem = require('../models/MenuItem');
 const cloudinary = require('../config/cloudinary');
 const {sendWelcomeEmail, sendForgotPasswordLink}  =  require('../utils/email')
 const crypto = require('crypto')
+const {OAuth2Client } = require('google-auth-library')
 
+const googleClient = new OAuth2Client(
+    process.env.GOOGLE_CLIENT_ID
+)
+
+const googleLogin = async(req,res)=>{
+    try{
+        const{credential} = req.body;
+        if(!credential){
+            return res.status(400).json(
+                {
+                    message:"Google Credential is required"
+                }
+            )
+        }
+        // verify google credential
+        const ticket = await googleClient.verifyIdToken(
+            {
+                idToken:credential,
+                audience:process.env.GOOGLE_CLIENT_ID
+            }
+        )
+
+        const payload = ticket.getPayload();
+
+        const {
+            sub:googleId,
+            email,
+            name,
+            
+            email_verified
+        }=payload
+
+        if(!email || !email_verified){
+            return res.status(400).json(
+                {
+                    message:"Google email is not verified"
+                }
+            )
+        }
+
+        // find vendor by emial
+
+        let vendor = await Vendor.findOne(
+            {
+                email:email.toLowerCase()
+            }
+        )
+
+        if(!vendor){
+            const newvendor = new Vendor(
+                {
+                    name,
+                    email:email.toLowerCase(),
+                    googleId,
+                    authProvider:"google",
+                    
+                }
+            )
+            await newvendor.save();
+        }else{
+            if(!vendor.googleId){
+                vendor.googleId = googleId;
+            }
+            vendor.authProvider = "google";
+            await vendor.save();
+        }
+        // create jwt for frontend
+
+        const token = jwt.sign(
+            {
+                id:vendor._id
+            },
+            process.env.JWT_SECRET,
+            {
+                expiresIn:"7d"
+            }
+        )
+
+        return res.status(200).json(
+            {
+                message:"Google login successful",
+                token,
+                vendor
+            }
+        )
+    }catch(err){
+        console.log("Google login errror",err);
+        return res.status(500).json(
+            {
+                message:"Internal server error"
+            }
+        )
+    }
+}
 const createVendor = async (req, res) => {
     try {
         const{
@@ -289,6 +384,7 @@ module.exports = {
     deleteVendor,
     loginVendor,
     forgotPassword,
-    resetPassword
+    resetPassword,
+    googleLogin
 };
 
