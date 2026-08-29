@@ -2,13 +2,14 @@ const express = require("express");
 const dotenv = require("dotenv");
 dotenv.config();
 const app = express();
+const {connectRedis} = require('./config/redis')
 const connectDB = require("./config/db");
 const vendorRoutes = require("./routes/vendorRoutes");
 const outletRoutes = require("./routes/outletRoutes");
 const menuCategoryRoutes = require("./routes/menuCategoryRoutes");
 const menuItemRoutes = require("./routes/menuItemRoutes");
 // Connect to MongoDB
-connectDB();
+// connectDB();
 
 const cors = require("cors");
 app.use(cors());
@@ -26,7 +27,19 @@ app.get('/',(req,res)=>{
 
 const PORT = process.env.PORT || 5000;  
 
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-}   
-)
+
+const startServer = async ()=>{
+    try {
+        await connectDB();
+        await connectRedis();
+        app.listen(PORT, () => {
+                console.log(`Server is running on port ${PORT}`);
+            }   
+        )
+    } catch (error) {
+        console.log("Server startup error",error);
+        process.exit(1);
+    }
+}
+
+startServer();

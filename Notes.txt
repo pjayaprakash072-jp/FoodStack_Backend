@@ -71,3 +71,6 @@ Update password
 Delete reset token
         ↓
 User logs in with new password
+
+// Implementing Redis cloud
+
