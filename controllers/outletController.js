@@ -3,6 +3,7 @@ const Vendor = require('../models/Vendor');
 const MenuCategory = require('../models/MenuCategory');
 const MenuItem = require('../models/MenuItem');
 const cloudinary = require('../config/cloudinary');
+const {getCache , setCache, deleteCache} = require('../utils/cache')
 
 const createOutlet = async (req, res) => {
     try {
@@ -50,6 +51,8 @@ const createOutlet = async (req, res) => {
         vendor.outlets.push(newOutlet._id);
         await vendor.save();
         await newOutlet.save();
+        await deleteCache("outlets:all");
+        await deleteCache(`outlets:vendor:${newOutlet.vendor}`)
         res.status(201).json({ message: "Outlet created successfully", outlet: newOutlet });    
     }catch (error) {
         console.error(error);
@@ -60,8 +63,28 @@ const createOutlet = async (req, res) => {
 
 const getAllOutlets = async (req, res) => {
     try {
+        const cachekey = "outlets:all";
+        const cachedOutlets = await getCache(cachekey);
+        if(cachedOutlets){
+            console.log("Redis CACHE HIT - getAllOutlets");
+            return res.status(200).json(
+                {
+                    message:"Outlets retrieved successfully",
+                    outlets:cachedOutlets,
+                    source:"redis"
+                }
+            )
+        }
+        console.log("Redis CACHE MISS - getAllOutlets")
         const outlets = await Outlet.find().populate('vendor', 'name email phone');
-        res.status(200).json({ message: "Outlets retrieved successfully", outlets });
+        await setCache(cachekey,outlets,300)
+        res.status(200).json(
+            {
+                message: "Outlets retrieved successfully",
+                outlets,
+                source:"mongodb"
+            }
+        );
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Internal server error", error: error.message });
@@ -72,11 +95,31 @@ const getAllOutlets = async (req, res) => {
 const getOutletById = async (req, res) => {
     try {
         const outletId = req.params.id; 
+        const cacheKey = `outlet:${outletId}`;
+        const cachedOutlet = await getCache(cacheKey);
+        if(cachedOutlet){
+            console.log("Redis CACHE HIT - getOutletBuId");
+            return res.status(200).json(
+                {
+                    message:"Outlet retrieved Successfully!",
+                    outlet:cachedOutlet,
+                    source:"redis"
+                }
+            )
+        }
+        console.log("Redis CACHE MISS - getOutletById");
         const outlet = await Outlet.findById(outletId).populate('vendor', 'name email phone');
         if (!outlet) {
             return res.status(404).json({ message: "Outlet not found" });
         }
-        res.status(200).json({ message: "Outlet retrieved successfully", outlet });
+        await setCache(cacheKey,outlet,300);
+        res.status(200).json(
+            {
+                message: "Outlet retrieved successfully",
+                outlet,
+                source:"mongoDb"
+            }
+        );
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: "Internal server error", error: error.message });
@@ -86,7 +129,22 @@ const getOutletById = async (req, res) => {
 const getOutletsByVendorId = async (req, res) => {
     try {
         const vendorId = req.params.vendorId;
+        const cacheKey = `outlets:vendor:${vendorId}`
+        const cachedOutlets = await getCache(cacheKey);
+        if(cachedOutlets){
+            console.log("Redis CACHE HIT - getOutletsByVendor");
+            return res.status(200).json(
+                {
+                    message:"Outlets retrieved Successfully!",
+                    outlets:cachedOutlets,
+                    source:"redis"
+                }
+            )
+        }
+        console.log("Redis CACHE MISS - getOutletsByVendor");
+
         const outlets = await Outlet.find({ vendor: vendorId }).populate('vendor', 'name email phone');
+        await setCache(cacheKey,outlets,300);
         res.status(200).json(
             {
                 message: outlets.length>0 ? "Outlets retrieved successfully" : "No Outlets found for this vendor", outlets
@@ -120,6 +178,9 @@ const updateOutlet = async (req, res) => {
         // update otehr values
         Object.assign(outlet,req.body);
         await outlet.save();
+        await deleteCache(`outlet:${outlet._id}`)
+        await deleteCache("outlets:all");
+        await deleteCache(`outlets:vendor:${outlet.vendor}`)
         res.status(200).json({ message: "Outlet updated successfully", outlet });
 
     } catch (error) {
@@ -145,7 +206,9 @@ const deleteOutlet = async (req, res) => {
         if (outlet.image?.public_id) {
             await cloudinary.uploader.destroy(outlet.image.public_id);
         }
-
+        await deleteCache(`outlet:${outletid}`);
+        await deleteCache(`outlets:vendor:${outlet.vendor}`)
+        await deleteCache("outlets:all")
 
         const menuCategories = await MenuCategory.find({ outlet: outletid });
         for(const category of menuCategories){
