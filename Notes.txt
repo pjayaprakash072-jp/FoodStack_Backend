@@ -74,3 +74,18 @@ User logs in with new password
 
 // Implementing Redis cloud
 
+cache keys
+1. getting all outlets 
+        -> outlets:all
+        -> it might contain 
+                ->
+                [
+                        Outlet 1,
+                        Outlet 2,
+                        Outlet.3
+                        .......
+                ]
+2. get outlet by id 
+        -> outlet:{id}
+3. get outlets by vendor
+        -> outlets:vendor:{vendorId}
