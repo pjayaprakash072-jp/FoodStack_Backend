@@ -71,7 +71,7 @@ const getAllOutlets = async (req, res) => {
                 {
                     message:"Outlets retrieved successfully",
                     outlets:cachedOutlets,
-                    source:"redis"
+                    source:"Redis"
                 }
             )
         }
@@ -82,7 +82,7 @@ const getAllOutlets = async (req, res) => {
             {
                 message: "Outlets retrieved successfully",
                 outlets,
-                source:"mongodb"
+                source:"mongoDB"
             }
         );
     } catch (error) {
