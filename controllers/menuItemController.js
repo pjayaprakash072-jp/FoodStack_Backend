@@ -115,7 +115,7 @@ const getMenuItemsByCategory = async (req, res) => {
 }
 
 const updateMenuItem = async (req, res) => {
-    console.log(req.body);
+    // console.log(req.body);
     try{
         const menuItemId = req.params.menuItemId;
         const menuItem = await MenuItem.findById(menuItemId);
