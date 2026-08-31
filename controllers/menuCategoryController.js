@@ -46,6 +46,8 @@ const createMenuCategory = async(req,res)=>{
         await deleteCache("menuCategories:all")
         await deleteCache(`menuCategories:vendor:${outlet.vendor}`)
         await deleteCache(`menuCategories:outlet:${outletId}`)
+        await deleteCache("outlets:all")
+        await deleteCache(`outlet:${outletId}`)
         res.status(201).json(
             {
                 message:"Menu category created successfully",
@@ -91,7 +93,7 @@ const getMenuCategoriesByOutlet = async(req,res)=>{
         await setCache(
             cacheKey,
             menuCategories,
-            300
+            30
         )
         res.status(200).json(
             {
@@ -125,7 +127,7 @@ const getAllMenuCategories = async(req,res)=>{
         await setCache(
             cacheKey,
             menuCategories,
-            300
+            30
         )
         res.status(200).json(
             {
@@ -169,7 +171,7 @@ const getMenuCategoryById = async(req,res)=>{
                 }
             );
         }
-        await setCache(cacheKey,menuCategory,300);
+        await setCache(cacheKey,menuCategory,30);
         res.status(200).json(
             {
                 message:"Menu category retrieved successfully",
@@ -336,7 +338,7 @@ const getMenuCategoriesByVendor = async(req,res)=>{
         const outlets = await Outlet.find({vendor:vendorId});
         const outletIds = outlets.map(outlet=>outlet._id);
         const menuCategories = await MenuCategory.find({outlet:{$in:outletIds}}).populate('outlet',"name city area");
-        await setCache(cacheKey,menuCategories,300);
+        await setCache(cacheKey,menuCategories,30);
         res.status(200).json(
             {
                 message:"Menu categories fetched successfully",

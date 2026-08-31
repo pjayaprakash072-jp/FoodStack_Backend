@@ -9,7 +9,7 @@ const getCache = async (key)=>{
     return JSON.parse(data); // converting the string data that we get from redis cloud
 }
 
-const setCache = async(key, data, ttl=300)=>{
+const setCache = async(key, data, ttl=30)=>{
     await redisClient.setEx(
         key,
         ttl,
