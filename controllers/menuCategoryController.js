@@ -48,6 +48,7 @@ const createMenuCategory = async(req,res)=>{
         await deleteCache(`menuCategories:outlet:${outletId}`)
         await deleteCache("outlets:all")
         await deleteCache(`outlet:${outletId}`)
+        await deleteCache(`outlets:vendor:${outlet.vendor}`)
         res.status(201).json(
             {
                 message:"Menu category created successfully",
@@ -93,7 +94,7 @@ const getMenuCategoriesByOutlet = async(req,res)=>{
         await setCache(
             cacheKey,
             menuCategories,
-            30
+            300
         )
         res.status(200).json(
             {
@@ -127,7 +128,7 @@ const getAllMenuCategories = async(req,res)=>{
         await setCache(
             cacheKey,
             menuCategories,
-            30
+            300
         )
         res.status(200).json(
             {
@@ -171,7 +172,7 @@ const getMenuCategoryById = async(req,res)=>{
                 }
             );
         }
-        await setCache(cacheKey,menuCategory,30);
+        await setCache(cacheKey,menuCategory,300);
         res.status(200).json(
             {
                 message:"Menu category retrieved successfully",
@@ -267,8 +268,11 @@ const deleteMenuCategory = async(req,res)=>{
         const vendorId = menuCategory.outlet.vendor;
         await deleteCache("menuCategories:all")
         await deleteCache(`menuCategories:outlet:${menuCategory.outlet}`)
+        await deleteCache(`outlet:${menuCategory.outlet}`)
         await deleteCache(`menuCategory:${menuCategory._id}`)
         await deleteCache(`menuCategories:vendor:${vendorId}`)
+        await deleteCache(`outlets:vendor:${vendorId}`)
+        await deleteCache("outlets:all") //use this when we don't use the categories info in outlets like no of catregories.
 
         //Delete image from cloudinary
         if(menuCategory.image?.public_id){
@@ -338,7 +342,7 @@ const getMenuCategoriesByVendor = async(req,res)=>{
         const outlets = await Outlet.find({vendor:vendorId});
         const outletIds = outlets.map(outlet=>outlet._id);
         const menuCategories = await MenuCategory.find({outlet:{$in:outletIds}}).populate('outlet',"name city area");
-        await setCache(cacheKey,menuCategories,30);
+        await setCache(cacheKey,menuCategories,300);
         res.status(200).json(
             {
                 message:"Menu categories fetched successfully",

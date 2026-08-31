@@ -89,3 +89,26 @@ cache keys
         -> outlet:{id}
 3. get outlets by vendor
         -> outlets:vendor:{vendorId}
+
+
+
+
+
+Redis Cache keys:
+----------------
+1. outlet
+---------
+        ->"outlets:all"
+        ->`outlet:${outletId}`
+        ->`outlets:vendor:${vendorId}`
+2. menuCategory
+        ->"menuCategories:all"
+        ->`menuCategories:outlet:${outletId}`
+        ->`menuCategory:${menuCategoryId}`
+        ->`menuCategories:vendor:${vendorId}`
+3.menuItems
+        ->"meniItems:all"
+        ->`meniItem:${menuItemId}`
+        ->`menuItems:outlet:${outletId}`
+        ->`menuItems:category:${categoryId}`
+        ->`menuItems:vendor:${vendorId}`

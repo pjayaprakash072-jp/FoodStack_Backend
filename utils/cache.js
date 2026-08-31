@@ -17,7 +17,7 @@ const setCache = async(key, data, ttl=30)=>{
     )
 }
 
-const deleteCache = async(key)=>{
+const deleteCache = async(...key)=>{
     await redisClient.del(key);
 }
 

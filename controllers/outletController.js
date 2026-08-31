@@ -77,7 +77,7 @@ const getAllOutlets = async (req, res) => {
         }
         console.log("Redis CACHE MISS - getAllOutlets")
         const outlets = await Outlet.find().populate('vendor', 'name email phone');
-        await setCache(cachekey,outlets,30)
+        await setCache(cachekey,outlets,300)
         res.status(200).json(
             {
                 message: "Outlets retrieved successfully",
@@ -112,7 +112,7 @@ const getOutletById = async (req, res) => {
         if (!outlet) {
             return res.status(404).json({ message: "Outlet not found" });
         }
-        await setCache(cacheKey,outlet,30);
+        await setCache(cacheKey,outlet,300);
         res.status(200).json(
             {
                 message: "Outlet retrieved successfully",
@@ -144,7 +144,7 @@ const getOutletsByVendorId = async (req, res) => {
         console.log("Redis CACHE MISS - getOutletsByVendor");
 
         const outlets = await Outlet.find({ vendor: vendorId }).populate('vendor', 'name email phone');
-        await setCache(cacheKey,outlets,30);
+        await setCache(cacheKey,outlets,300);
         res.status(200).json(
             {
                 message: outlets.length>0 ? "Outlets retrieved successfully" : "No Outlets found for this vendor", outlets
