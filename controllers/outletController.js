@@ -51,8 +51,9 @@ const createOutlet = async (req, res) => {
         vendor.outlets.push(newOutlet._id);
         await vendor.save();
         await newOutlet.save();
-        await deleteCache("outlets:all");
-        await deleteCache(`outlets:vendor:${newOutlet.vendor}`)
+        await deleteCache("outlets:all",
+                `outlets:vendor:${newOutlet.vendor}`
+            );
         res.status(201).json({ message: "Outlet created successfully", outlet: newOutlet });    
     }catch (error) {
         console.error(error);
@@ -176,11 +177,12 @@ const updateOutlet = async (req, res) => {
             }
         }
         // update otehr values
+        await deleteCache(`outlet:${outlet._id}`,
+            "outlets:all",
+            `outlets:vendor:${outlet.vendor}`
+        );
         Object.assign(outlet,req.body);
         await outlet.save();
-        await deleteCache(`outlet:${outlet._id}`)
-        await deleteCache("outlets:all");
-        await deleteCache(`outlets:vendor:${outlet.vendor}`)
         res.status(200).json({ message: "Outlet updated successfully", outlet });
 
     } catch (error) {
@@ -189,57 +191,123 @@ const updateOutlet = async (req, res) => {
     }
 }
 
-
 const deleteOutlet = async (req, res) => {
-    
     try {
-        const outletid = req.params.id;
+        const outletId = req.params.id;
 
+        const outlet = await Outlet.findById(outletId);
 
-        const outlet = await Outlet.findById(outletid);
         if (!outlet) {
-            return res.status(404).json({ message: "Outlet not found" });
+            return res.status(404).json({
+                message: "Outlet not found"
+            });
         }
 
+        const vendorId = outlet.vendor;
 
-        //Delete image from cloudinary
+        // Find categories and menu items BEFORE deleting them
+        const menuCategories = await MenuCategory.find({
+            outlet: outletId
+        });
+
+        const menuItems = await MenuItem.find({
+            outlet: outletId
+        });
+
+        // Delete outlet image
         if (outlet.image?.public_id) {
-            await cloudinary.uploader.destroy(outlet.image.public_id);
+            await cloudinary.uploader.destroy(
+                outlet.image.public_id
+            );
         }
-        await deleteCache(`outlet:${outletid}`);
-        await deleteCache(`outlets:vendor:${outlet.vendor}`)
-        await deleteCache("outlets:all")
 
-        const menuCategories = await MenuCategory.find({ outlet: outletid });
-        for(const category of menuCategories){
-            if(category.image?.public_id){
-                await cloudinary.uploader.destroy(category.image.public_id);
+        // Delete category images
+        for (const category of menuCategories) {
+            if (category.image?.public_id) {
+                await cloudinary.uploader.destroy(
+                    category.image.public_id
+                );
             }
         }
-        await MenuCategory.deleteMany({outlet:outletid});
-        const menuItems = await MenuItem.find({ outlet: outletid });
-        for(const item of menuItems){
-            if(item.image?.public_id){
-                await cloudinary.uploader.destroy(item.image.public_id);
+
+        // Delete menu item images
+        for (const item of menuItems) {
+            if (item.image?.public_id) {
+                await cloudinary.uploader.destroy(
+                    item.image.public_id
+                );
             }
         }
-        await MenuItem.deleteMany({outlet:outletid})
-        // Remove outlet from vendor's outlets array
+
+        // Delete categories
+        await MenuCategory.deleteMany({
+            outlet: outletId
+        });
+
+        // Delete menu items
+        await MenuItem.deleteMany({
+            outlet: outletId
+        });
+
+        // Remove outlet from vendor
         await Vendor.findByIdAndUpdate(
-            outlet.vendor,
+            vendorId,
             {
-                $pull: { outlets: outletid }
+                $pull: {
+                    outlets: outletId
+                }
             }
-        )
-        await Outlet.findByIdAndDelete(outletid);
-        res.status(200).json({ message: "Outlet deleted successfully", outlet });
+        );
+
+        // Delete outlet
+        await Outlet.findByIdAndDelete(outletId);
+
+        // Individual category cache keys
+        const categoryCacheKeys = menuCategories.map(
+            category => `menuCategory:${category._id}`
+        );
+
+        // Individual menu item cache keys
+        const menuItemCacheKeys = menuItems.map(
+            item => `menuItem:${item._id}`
+        );
+
+        // Clear ALL affected Redis caches
+        await deleteCache(
+            // Outlet caches
+            `outlet:${outletId}`,
+            "outlets:all",
+            `outlets:vendor:${vendorId}`,
+
+            // Category caches
+            "menuCategories:all",
+            `menuCategories:outlet:${outletId}`,
+            `menuCategories:vendor:${vendorId}`,
+
+            // Menu item list caches
+            "menuItems:all",
+            `menuItems:outlet:${outletId}`,
+            `menuItems:vendor:${vendorId}`,
+
+            // Individual caches
+            ...categoryCacheKeys,
+            ...menuItemCacheKeys
+        );
+
+        res.status(200).json({
+            message: "Outlet deleted successfully",
+            outlet
+        });
+
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Internal server error", error: error.message });
-    }       
 
-}
-
+        res.status(500).json({
+            message: "Internal server error",
+            error: error.message
+        });
+    }
+};
 module.exports = {
     createOutlet,
     getAllOutlets,

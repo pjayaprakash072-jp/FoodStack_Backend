@@ -183,7 +183,7 @@ const getMenuitemsByOutlet = async (req, res) => {
         }
         console.log("Redis CACHE MISS - getAllMenuItemsByOutlet");
         const menuItems = await MenuItem.find({ outlet: outletId });
-        if (menuItems.length === 0) {
+        if (!menuItems) {
             return res.status(404).json(
                 {
                     message: "Menu items not found" 
@@ -226,7 +226,7 @@ const getMenuItemsByCategory = async (req, res) => {
         }
         console.log("Redis CACHE MISS - getAllMenuItemsByCategory");
         const menuItems = await MenuItem.find({ category: categoryId });
-        if (menuItems.length === 0) {
+        if (!menuItems) {
             return res.status(404).json(
                 { 
                     message: "Menu items not found" 
@@ -262,7 +262,6 @@ const updateMenuItem = async (req, res) => {
                 select:"vendor"
             }
         )
-        console.log(menuItem);
         if(!menuItem){
             return res.status(404).json(
                 {
@@ -282,8 +281,6 @@ const updateMenuItem = async (req, res) => {
             }
         }
         // update otehr fields.
-        Object.assign(menuItem,req.body);
-        await menuItem.save();
         await clearMenuItemUpdateCache(
             {
                 menuItemId,
@@ -292,6 +289,8 @@ const updateMenuItem = async (req, res) => {
                 vendorId:menuItem.outlet.vendor
             }
         )
+        Object.assign(menuItem,req.body);
+        await menuItem.save();
         res.status(200).json(
             {
                 message:"Menu item updated successfully",

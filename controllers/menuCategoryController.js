@@ -224,10 +224,11 @@ const updateMenuCategory = async(req,res)=>{
         // update otehr values.
         Object.assign(menuCategory,req.body);
         await menuCategory.save();
-        await deleteCache("menuCategories:all")
-        await deleteCache(`menuCategories:outlet:${menuCategory.outlet}`)
-        await deleteCache(`menuCategory:${menuCategory._id}`)
-        await deleteCache(`menuCategories:vendor:${vendorId}`)
+        await deleteCache("menuCategories:all",
+                `menuCategories:outlet:${menuCategory.outlet._id}`,
+                `menuCategory:${menuCategory._id}`,
+                `menuCategories:vendor:${vendorId}`
+            );
         res.status(200).json(
             {
                 message:"Menu category updated successfully",
@@ -266,20 +267,13 @@ const deleteMenuCategory = async(req,res)=>{
             );
         }
         const vendorId = menuCategory.outlet.vendor;
-        await deleteCache("menuCategories:all")
-        await deleteCache(`menuCategories:outlet:${menuCategory.outlet}`)
-        await deleteCache(`outlet:${menuCategory.outlet}`)
-        await deleteCache(`menuCategory:${menuCategory._id}`)
-        await deleteCache(`menuCategories:vendor:${vendorId}`)
-        await deleteCache(`outlets:vendor:${vendorId}`)
-        await deleteCache("outlets:all") //use this when we don't use the categories info in outlets like no of catregories.
-
+        
         //Delete image from cloudinary
         if(menuCategory.image?.public_id){
             await cloudinary.uploader.destroy(menuCategory.image.public_id);
         }
-
-
+        
+        
         //Delete all menu items associated with this category
         const menuItems = await MenuItem.find({category:menuCategoryId});
         for(const item of menuItems){
@@ -293,11 +287,34 @@ const deleteMenuCategory = async(req,res)=>{
                 }
             )
         }
-        await MenuItem.deleteMany({category:menuCategoryId});
+        const menuItemsForDeleteCache = await MenuItem.find({
+            category: menuCategoryId
+        });
 
+        const menuItemCacheKeys = menuItemsForDeleteCache.map(
+            item => `menuItem:${item._id}`
+        );
+        await deleteCache(
+            "menuCategories:all",
+            `menuCategories:outlet:${menuCategory.outlet._id}`,
+            `outlet:${menuCategory.outlet._id}`,
+            `menuCategory:${menuCategory._id}`,
+            `menuCategories:vendor:${vendorId}`,
+            `outlets:vendor:${vendorId}`,
+            "outlets:all",
+
+            // Menu item caches
+            "menuItems:all",//use this when we don't use the categories info in outlets like no of catregories.
+            `menuItems:category:${menuCategory._id}`,
+            `menuItems:outlet:${menuCategory.outlet._id}`,
+            `menuItems:vendor:${vendorId}`,
+            ...menuItemCacheKeys
+        );
+        await MenuItem.deleteMany({category:menuCategoryId});
+        
         //Delete the menu category from the outlet's menuCategories array
         await Outlet.findByIdAndUpdate(
-            menuCategory.outlet,
+            menuCategory.outlet._id,
             {
                 $pull:{menuCategories:menuCategoryId}
             }
