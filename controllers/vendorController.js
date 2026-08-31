@@ -309,7 +309,7 @@ const forgotPassword = async(req,res)=>{
 
         const resetURL =`${process.env.FRONTEND_URL}/reset-password/${resetToken}`
 
-        await sendForgotPasswordLink(vendor.email,vendor.name,resetURL);
+        sendForgotPasswordLink(vendor.email,vendor.name,resetURL);
         return res.status(200).json(
             {
                 message:"Password reset link is sent!"
