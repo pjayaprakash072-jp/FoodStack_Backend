@@ -203,3 +203,28 @@ We want:
                         ->$env:PORT=5003; node index.js
 
 step 6: create loadBalencer
+                         React
+                           │
+                           │
+                           ▼
+                  ┌─────────────────┐
+                  │  Load Balancer  │
+                  │      :4000      │
+                  └────────┬────────┘
+                           │
+                Round Robin Algorithm (selsecting the backend server from the array)
+                           │
+              ┌────────────┼────────────┐
+              ▼            ▼            ▼
+         ┌─────────┐  ┌─────────┐  ┌─────────┐
+         │Backend 1│  │Backend 2│  │Backend 3│
+         │  :5001  │  │  :5002  │  │  :5003  │
+         └────┬────┘  └────┬────┘  └────┬────┘
+              │            │            │
+              └────────────┼────────────┘
+                           ▼
+                       MongoDB
+                           │
+                         Redis
+                           │
+                       Cloudinary
