@@ -136,3 +136,28 @@ Making FoodStack Distributed system.
          MongoDB     Redis    Cloudinary
             │          │          │
          Data       Sessions     Images
+
+Step 2. 
+You can use this as your checklist:
+
+Data	                        Where it should live
+Vendor	                        MongoDB
+//Customer	                MongoDB
+Restaurant	                MongoDB
+Outlet	                        MongoDB
+Product	                        MongoDB
+//Menu	                        MongoDB
+//Orders	                        MongoDB
+//Payment record	                MongoDB
+Login session	                Redis
+Cache	                        Redis
+Rate-limit counters	        Redis
+Profile images	                Cloudinary
+Restaurant images	        Cloudinary
+Product images	                Cloudinary
+Email delivery	                Email provider
+JWT	                        Client
+Secrets/config	                Environment variables
+
+step 3 ; Create a health-check endpoint
+step 4 : Deploy your backend

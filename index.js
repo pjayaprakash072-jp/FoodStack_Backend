@@ -16,7 +16,13 @@ const cors = require("cors");
 app.use(cors());
 app.use(express.json());
 
-
+app.get("/health" , (req,res)=>{
+    return res.status(200).json(
+        {
+            status:"ok"
+        }
+    )
+})
 app.use("/vendor", vendorRoutes);
 app.use("/outlet", outletRoutes);
 app.use("/menu-category", menuCategoryRoutes);
