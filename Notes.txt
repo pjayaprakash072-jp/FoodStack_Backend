@@ -228,3 +228,9 @@ step 6: create loadBalencer
                          Redis
                            │
                        Cloudinary
+
+The problem
+
+Every request creates a new proxy middleware:
+fix:
+creating Proxy instance ONCE per each packen.

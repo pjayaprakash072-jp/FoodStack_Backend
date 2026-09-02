@@ -8,11 +8,12 @@ const vendorRoutes = require("./routes/vendorRoutes");
 const outletRoutes = require("./routes/outletRoutes");
 const menuCategoryRoutes = require("./routes/menuCategoryRoutes");
 const menuItemRoutes = require("./routes/menuItemRoutes");
-// const { redisClient } = require("./config/redis")
+const { redisClient } = require("./config/redis")
 const crypto = require('crypto')
 const INSTANCE_ID = crypto.randomUUID();
 // Connect to MongoDB
 // connectDB();
+const PORT = process.env.PORT || 5000;  
 
 const cors = require("cors");
 app.use(cors());
@@ -42,8 +43,52 @@ app.get('/',(req,res)=>{
 // }
 
 
+// checkign is Redis is shared.
+// Store something in Redis
+app.get("/redis/set", async (req,res)=>{
+    try{
+        await redisClient.set("key","seted to redis");
+        res.status(200).json(
+            {
+                message:"Set data in redis",
+                instance:INSTANCE_ID,
+                port:PORT
+            }
+        )
+    }catch(err){
+        console.log("Failed to set data to redis");
+        res.status(500).json(
+            {
+                messsage:"Failed to set data to redis",
+            }
+        )
+    }
+})
 
-const PORT = process.env.PORT || 5000;  
+
+// Read something from Redis
+app.get("/redis/get", async (req, res) => {
+    try {
+        const value = await redisClient.get("key");
+
+        res.json({
+            message: "Value retrieved from Redis",
+            value: value,
+            instance: INSTANCE_ID,
+            port: PORT
+        });
+
+    } catch (error) {
+        console.error(error);
+
+        res.status(500).json({
+            error: "Redis get failed"
+        });
+    }
+});
+
+
+
 
 
 const startServer = async ()=>{
