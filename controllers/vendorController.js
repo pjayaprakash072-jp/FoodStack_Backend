@@ -93,6 +93,11 @@ const googleLogin = async(req,res)=>{
             }
         )
 
+        try{
+            sendWelcomeEmail(email,name);
+        }catch(err){
+            console.log("Failed to send Welcome email" , err);
+        }
         return res.status(200).json(
             {
                 message:"Google login successful",
