@@ -159,5 +159,47 @@ Email delivery	                Email provider
 JWT	                        Client
 Secrets/config	                Environment variables
 
-step 3 ; Create a health-check endpoint
+step 3 ; Create a health-check endpoint - just texting with intial route with "..../health"
 step 4 : Deploy your backend
+step 5 : Run multiple backend instances
+Currently we probably have:
+
+                    Render
+                      │
+                      ↓
+                FoodStack Backend
+                      │
+              ┌───────┴────────┐
+              ↓                ↓
+           MongoDB           Redis
+
+We want:
+
+                    Render
+                      │
+              ┌───────┼───────┐
+              ↓       ↓       ↓
+          Instance 1 Instance 2 Instance 3
+              │       │       │
+              └───────┼───────┘
+                      ↓
+               Same MongoDB
+               Same Redis
+               Same Cloudinary
+
+        1. Make your FoodStack server accept a configurable port
+                const PORT = process.env.PORT || 5000;
+
+                app.listen(PORT, () => {
+                console.log(`Server running on ${PORT}`);
+                });
+                Backend #1 → 5001
+                Backend #2 → 5002
+                Backend #3 → 5003
+        2. Create an instance ID and run .
+                -> run each 
+                        ->$env:PORT=5001; node index.js
+                        ->$env:PORT=5002; node index.js
+                        ->$env:PORT=5003; node index.js
+
+step 6: create loadBalencer

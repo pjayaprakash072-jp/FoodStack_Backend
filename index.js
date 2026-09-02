@@ -8,7 +8,9 @@ const vendorRoutes = require("./routes/vendorRoutes");
 const outletRoutes = require("./routes/outletRoutes");
 const menuCategoryRoutes = require("./routes/menuCategoryRoutes");
 const menuItemRoutes = require("./routes/menuItemRoutes");
-const { redisClient } = require("./config/redis")
+// const { redisClient } = require("./config/redis")
+const crypto = require('crypto')
+const INSTANCE_ID = crypto.randomUUID();
 // Connect to MongoDB
 // connectDB();
 
@@ -19,7 +21,9 @@ app.use(express.json());
 app.get("/health" , (req,res)=>{
     return res.status(200).json(
         {
-            status:"ok"
+            status:"ok",
+            instance:INSTANCE_ID,
+            port:PORT
         }
     )
 })
@@ -47,7 +51,7 @@ const startServer = async ()=>{
         await connectDB();
         await connectRedis();
         app.listen(PORT, () => {
-                console.log(`Server is running on port ${PORT}`);
+                console.log(`Server is running on port ${PORT} || Instance: ${INSTANCE_ID}`);
             }   
         )
         // test();
