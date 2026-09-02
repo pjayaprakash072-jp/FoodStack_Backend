@@ -8,7 +8,7 @@ const verifyToken = require("../middleware/verifyToken");
 router.post("/create", upload.single("profileImg"), createVendor);
 router.get("/getall", getAllVendors);
 router.get("/get/:id", getVendorById);
-router.put("/update/:id",verifyToken, upload.single("profileImg"), updateVendor);
+router.put("/update",verifyToken, upload.single("profileImg"), updateVendor);
 router.delete("/delete/:id", deleteVendor);
 router.post("/login", loginVendor);
 router.post("/forgot-password",forgotPassword);

@@ -98,6 +98,7 @@ Redis Cache keys:
 ----------------
 1. outlet
 ---------
+        ->`vendor:session:${vendorId}`
         ->"outlets:all"
         ->`outlet:${outletId}`
         ->`outlets:vendor:${vendorId}`
@@ -112,3 +113,26 @@ Redis Cache keys:
         ->`menuItems:outlet:${outletId}`
         ->`menuItems:category:${categoryId}`
         ->`menuItems:vendor:${vendorId}`
+
+
+Making FoodStack Distributed system.
+
+1. Make Application stateless.
+        ->Any backend instance should be able to handle any request without depending on data stored inside that particular Node.js process.
+
+        What we're trying to achieve
+
+        After Step 1, your FoodStack should look conceptually like this:
+                   FOODSTACK
+                       │
+                       ↓
+                  React Client
+                       │
+                       ↓
+                 Node/Express
+                       │
+            ┌──────────┼──────────┐
+            ↓          ↓          ↓
+         MongoDB     Redis    Cloudinary
+            │          │          │
+         Data       Sessions     Images

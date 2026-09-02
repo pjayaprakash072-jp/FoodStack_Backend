@@ -211,7 +211,7 @@ const getVendorById = async (req, res) => {
 
 const updateVendor = async (req, res) => {
     try {
-        const vendorId = req.params.id;
+        const vendorId = req.vendorId;
         // console.log(vendorId);
         const vendor = await Vendor.findById(vendorId);
         if (!vendor) {

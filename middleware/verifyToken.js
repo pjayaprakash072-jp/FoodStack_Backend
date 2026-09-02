@@ -17,16 +17,16 @@ const verifyToken = async (req, res, next) => {
             token,
             process.env.JWT_SECRET
         );
-        const vendor = await Vendor.findById(decoded.id);
-        if (!vendor) {
-            return res.status(404).json(
-                {
-                    message: "Vendor not found." 
-                }
-            );
-        }
+        // const vendor = await Vendor.findById(decoded.id);
+        // if (!vendor) {
+        //     return res.status(404).json(
+        //         {
+        //             message: "Vendor not found." 
+        //         }
+        //     );
+        // }
         const currentSession = await redisClient.get(
-            `vendor:session:${vendor._id}`
+            `vendor:session:${decoded.id}`
         )
         if(!currentSession){
             return res.status(401).json(
@@ -42,7 +42,7 @@ const verifyToken = async (req, res, next) => {
                 }
             )
         }
-        req.vendorId = vendor._id;
+        req.vendorId = decoded.id;
         next();
     } catch (err) {
         console.error(err);
