@@ -234,3 +234,113 @@ The problem
 Every request creates a new proxy middleware:
 fix:
 creating Proxy instance ONCE per each packen.
+
+
+loadBalencer:
+============
+                    START
+                      │
+                      ▼
+              Load Balancer starts
+                      │
+                      ▼
+            Load environment variables
+                      │
+                      ▼
+              Read backend URLs
+                      │
+                      ▼
+       ┌──────────────────────────────┐
+       │ Create serverStatus[]        │
+       │                              │
+       │ 5001 → healthy: true         │
+       │ 5002 → healthy: true         │
+       │ 5003 → healthy: true         │
+       └──────────────┬───────────────┘
+                      │
+                      ▼
+             Create proxy for
+             each backend server
+                      │
+                      ▼
+              Start health check
+                      │
+                      ▼
+          Check 5001, 5002, 5003
+                      │
+                      ▼
+             Update serverStatus
+                      │
+                      ▼
+            Start Express server
+                      │
+                      ▼
+          Wait for client request
+                      │
+                      ▼
+             ┌─────────────────┐
+             │ Client Request  │
+             │ GET /products   │
+             └────────┬────────┘
+                      │
+                      ▼
+             Load Balancer
+                receives
+                request
+                      │
+                      ▼
+          getNextHealthyServer()
+                      │
+                      ▼
+          ┌─────────────────────┐
+          │ Check currentServer │
+          └──────────┬──────────┘
+                     │
+                     ▼
+              Is server healthy?
+                /           \
+              YES            NO
+               │              │
+               │              ▼
+               │       Check next server
+               │              │
+               │              ▼
+               │       Is it healthy?
+               │          /       \
+               │        YES        NO
+               │         │          │
+               ▼         │          ▼
+         Select server   │    Continue checking
+               │         │
+               └────┬────┘
+                    │
+                    ▼
+             Move pointer
+          to next server
+                    │
+                    ▼
+            Forward request
+              using proxy
+                    │
+                    ▼
+          ┌──────────────────┐
+          │ Selected Backend │
+          │                  │
+          │ 5001 / 5002 /    │
+          │ 5003             │
+          └────────┬─────────┘
+                   │
+                   ▼
+             Backend handles
+                request
+                   │
+                   ▼
+             Backend sends
+                response
+                   │
+                   ▼
+             Proxy forwards
+               response
+                   │
+                   ▼
+                 Client

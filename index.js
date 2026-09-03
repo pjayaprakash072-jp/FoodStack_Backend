@@ -107,3 +107,5 @@ const startServer = async ()=>{
 }
 
 startServer();
+
+// $env:PORT=5001; node index.js USE THIS TO RUN BACKEND SERVER. WHEN U HAVE LOADBALANCER.
