@@ -8,6 +8,9 @@
     "start": "node index.js",
     "test":"jest"
   },
+  "jest":{
+    "setupFilesAfterEnv":["<rootDir>/tests/setup.js"]
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",

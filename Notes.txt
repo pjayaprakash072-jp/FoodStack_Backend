@@ -344,3 +344,8 @@ loadBalencer:
                    │
                    ▼
                  Client
+
+
+Testing
+============
+npx jest tests/vendor.test.js --runInBand -- used to run only one file.
