@@ -1,44 +1,32 @@
-const {createClient} = require('redis')// it will make connection between redis and nodejs(application);
+const { createClient } = require("redis");
 
-// Create redis client 
+const redisClient = createClient({
+    url: process.env.REDIS_URL
+});
 
-const redisClient = createClient(
-    {
-        url:process.env.REDIS_URL
+redisClient.on("connect", () => {
+    console.log("Redis connecting...");
+});
+
+redisClient.on("ready", () => {
+    console.log("Redis connected successfully!");
+});
+
+redisClient.on("error", (err) => {
+    console.error("Redis Error:", err);
+});
+
+redisClient.on("reconnecting", () => {
+    console.log("Redis reconnecting...");
+});
+
+const connectRedis = async () => {
+    if (!redisClient.isOpen) {
+        await redisClient.connect();
     }
-)
+};
 
-// this even runs when the redis start establishing connection with redis cloud.
-
-redisClient.on("connect",()=>{
-    console.log("Redis Connection....")
-})
-
-// this event runs when redis connection successfully established connection and ready to accept commands
-// commands like redisClient.get(), redis....set(), redisCli....del()...
-redisClient.on("ready",()=>{
-    console.log("Redis connedted successfully!");
-})
-// shown if error occured while connecting
-
-redisClient.on("error",(err)=>{
-    console.error("Redis Error",err);
-})
-
-// If the connection to Redis is lost the redis client may try to connect again.
-
-redisClient.on("reconnecting",()=>{
-    console.log("Redis reconnectins....");
-})
-
-// own function for connecting  to Redis.
-
-const connectRedis = async ()=>{
-    await redisClient.connect();
-}
-
-
-
-
-
-module.exports = {redisClient,connectRedis}
+module.exports = {
+    redisClient,
+    connectRedis
+};

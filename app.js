@@ -1,14 +1,27 @@
 const express = require("express");
+const cors = require("cors");
+const crypto = require("crypto");
+
 const app = express();
+
+
 const vendorRoutes = require("./routes/vendorRoutes");
 const outletRoutes = require("./routes/outletRoutes");
 const menuCategoryRoutes = require("./routes/menuCategoryRoutes");
 const menuItemRoutes = require("./routes/menuItemRoutes");
+
+
 const { redisClient } = require("./config/redis")
 
-const cors = require("cors");
+
+const INSTANCE_ID = crypto.randomUUID();
+
+const PORT = process.env.PORT || 5000;  
+
+
 app.use(cors());
 app.use(express.json());
+
 
 app.use("/vendor", vendorRoutes);
 app.use("/outlet", outletRoutes);
@@ -19,26 +32,16 @@ app.use("/menu-item", menuItemRoutes);
 app.get('/',(req,res)=>{
     res.send("Welcome to FoodStack!")
 })
-
-
+// health Check.
 
 app.get("/health" , (req,res)=>{
     return res.status(200).json(
         {
-            status:"ok",
-            instance:INSTANCE_ID,
-            port:PORT
+            status:"ok"
         }
     )
 })
 
-
-// TESTEING REDIS CONNECTION.
-//===========================
-// const testRedis = async ()=>{
-//     await redisClient.set("key","hello");
-//     console.log(await redisClient.get("key"));
-// }
 
 
 // checking is Redis is shared.
