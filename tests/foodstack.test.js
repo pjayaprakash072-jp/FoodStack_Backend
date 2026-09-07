@@ -13,6 +13,25 @@ const vendorData = {
     businessName:"test Restaurant",
     profileImg:"tests/Images/undraw_young-man-avatar_wgbd.png"
 }
+const outletData = {
+    name: "FoodStack Outlet",
+    description: "A simple test restaurant outlet",
+    phone: "9876543210",
+    address: "123 Main Street",
+    city: "Chennai",
+    area: "T Nagar",
+    cuisine: ["Indian", "Chinese"],
+    foodType: "both",
+    openingTime: "09:00",
+    closingTime: "22:00",
+    image:"tests/Images/fruit shop-cuate.png"
+};
+const menuCategoryData={
+    name:"Category-1",
+    description:"good",
+    displayOrder:4,
+    isActive:true
+}
 describe('Vendor API', () => {
 
     test("Create Vendor" , async()=>{
@@ -101,20 +120,7 @@ describe('Vendor API', () => {
     })
 });
 
-const outletData = {
-    name: "FoodStack Outlet",
-    description: "A simple test restaurant outlet",
-    phone: "9876543210",
-    address: "123 Main Street",
-    city: "Chennai",
-    area: "T Nagar",
-    cuisine: ["Indian", "Chinese"],
-    foodType: "both",
-    openingTime: "09:00",
-    closingTime: "22:00",
-    image:"tests/Images/fruit shop-cuate.png"
-};
-describe("Outlet API",()=>{
+describe("Outlet && MenuCategory API",()=>{
     
     beforeAll(async()=>{
         const loginresponse = await request(app)
@@ -181,6 +187,16 @@ describe("Outlet API",()=>{
         .field("name","Updated FoodStack Outlet")
         expect(response.statusCode).toBe(200);
 
+    })
+    test("Creating menuCategory",async()=>{
+        const response = await request(app)
+        .post(`/menu-category/create/${outletId}`)
+        .set("token",token)
+        .field("name",menuCategoryData.name)
+        .field("description",menuCategoryData.description)
+        .field("displayOrder",menuCategoryData.displayOrder)
+        .field("isActive",menuCategoryData.isActive)
+        expect(response.statusCode).toBe(201)
     })
     test("Deleting outlet",async()=>{
         const response = await request(app)
