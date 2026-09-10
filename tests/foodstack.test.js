@@ -5,6 +5,8 @@ const app = require('../app');
 let vendorId;
 let token;
 let outletId;
+let categoryId;
+let menuItemId;
 const vendorData = {
     name:"test Vendor",
     email:"test@gmail.com",
@@ -32,6 +34,16 @@ const menuCategoryData={
     displayOrder:4,
     isActive:true
 }
+const menuItem = {
+    name: "Chicken Burger",
+    description: "Juicy chicken burger with fresh vegetables",
+    price: 199,
+    stock: 20,
+    discount: 10,
+    foodType: "Non-Veg",
+    preparationTime: 15,
+    isAvailable: true
+}
 describe('Vendor API', () => {
 
     test("Create Vendor" , async()=>{
@@ -48,7 +60,7 @@ describe('Vendor API', () => {
 
         vendorId = response.body.vendor._id;
 
-        await console.log(vendorId);
+        //console.log(vendorId);
 
     },15000)
 
@@ -71,7 +83,7 @@ describe('Vendor API', () => {
 
         vendorId = response.body.vendor._id;
 
-        console.log(token);
+        // console.log(token);
 
     })
 
@@ -85,19 +97,19 @@ describe('Vendor API', () => {
 
         expect(response.statusCode).toBe(200)
 
-        console.log(response.body.vendor)
+        // console.log(response.body.vendor)
 
     })
 
 
 
-    test("getting all vendors" ,async ()=>{
+    test("Getting all vendors" ,async ()=>{
         const response = await request(app)
         .get("/vendor/getall")
 
         expect(response.statusCode).toBe(200)
 
-        console.log(response.body.vendors)
+        // console.log(response.body.vendors)
 
     })
     
@@ -113,7 +125,7 @@ describe('Vendor API', () => {
 
         expect(response.statusCode).toBe(200);
 
-        console.log(response.body.vendor)
+        // console.log(response.body.vendor)
 
 
 
@@ -157,7 +169,7 @@ describe("Outlet && MenuCategory API",()=>{
 
         outletId = response.body.outlet._id;
 
-        console.log(response.body.outlet)
+        // console.log(response.body.outlet)
 
     },15000)
 
@@ -174,7 +186,7 @@ describe("Outlet && MenuCategory API",()=>{
         expect(response.statusCode).toBe(200);
 
     })
-    test("gettign outlets by vendor",async()=>{
+    test("Getting outlets by vendor",async()=>{
         const response = await request(app)
         .get(`/outlet/vendor/${vendorId}`)
         expect(response.statusCode).toBe(200);
@@ -188,6 +200,9 @@ describe("Outlet && MenuCategory API",()=>{
         expect(response.statusCode).toBe(200);
 
     })
+})
+
+describe("menuCategory API",()=>{
     test("Creating menuCategory",async()=>{
         const response = await request(app)
         .post(`/menu-category/create/${outletId}`)
@@ -197,6 +212,99 @@ describe("Outlet && MenuCategory API",()=>{
         .field("displayOrder",menuCategoryData.displayOrder)
         .field("isActive",menuCategoryData.isActive)
         expect(response.statusCode).toBe(201)
+        
+        categoryId = response.body.menuCategory._id;
+    })
+
+    test("Get menuCategories by vendor",async()=>{
+        const response = await request(app)
+        .get(`/menu-category/vendor/${vendorId}`)
+        expect(response.statusCode).toBe(200);
+    })
+    test("Get menuCategories by Outlet",async()=>{
+        const response = await request(app)
+        .get(`/menu-category/outlet/${outletId}`)
+        expect(response.statusCode).toBe(200);
+    })
+    test("Get All menu Categories",async()=>{
+        const response = await request(app)
+        .get("/menu-category/getall")
+        expect(response.statusCode).toBe(200);
+    })
+    test("Get menuCategory by Id",async()=>{
+        const response = await request(app)
+        .get(`/menu-category/get/${categoryId}`);
+        expect(response.statusCode).toBe(200);
+    })
+    test("Updating menuCategory",async()=>{
+        const response = await request(app)
+        .put(`/menu-category/update/${categoryId}`)
+        .set("token",token)
+        .field("name","updated menu Category")
+        expect(response.statusCode).toBe(200);
+    })
+    
+})
+
+describe("menu-Item API's",()=>{
+    test("Creating menu-Item",async()=>{
+        const response = await request(app)
+        .post(`/menu-item/add/${categoryId}`)
+        .set("token",token)
+        .field("name",menuItem.name)
+        .field("description",menuItem.description)
+        .field("price",menuItem.price)
+        .field("stock",menuItem.stock)
+        .field("discount",menuItem.discount)
+        .field("foodType",menuItem.foodType)
+        .field("preparationTime",menuItem.preparationTime)
+        .field("isAvailable",menuItem.isAvailable)
+        expect(response.statusCode).toBe(201);
+        menuItemId = response.body.menuItem._id;
+    })
+    test("Getting all menuItems by Vendor",async()=>{
+        const response = await request(app)
+        .get(`/menu-item/vendor/${vendorId}`)
+        expect(response.statusCode).toBe(200);
+    })
+    test("Getting all menuItems",async()=>{
+        const response = await request(app)
+        .get("/menu-item/getall")
+        expect(response.statusCode).toBe(200);
+    })
+    test("Getting menuItems by Outlet",async()=>{
+        const response = await request(app)
+        .get(`/menu-item/outlet/${outletId}`)
+        expect(response.statusCode).toBe(200)
+    })
+    test("Getting menuItems by Category",async()=>{
+        const response = await request(app)
+        .get(`/menu-item/category/${categoryId}`)
+        expect(response.statusCode).toBe(200);
+    })
+    test("Getting menuItem by Id",async()=>{
+        const response = await request(app)
+        .get(`/menu-item/get/${menuItemId}`)
+        expect(response.statusCode).toBe(200);
+    })
+    test("Updating menuitem",async()=>{
+        const response = await request(app)
+        .put(`/menu-item/update/${menuItemId}`)
+        .set("token",token)
+        .field("name","Updated menuItem");
+        expect(response.statusCode).toBe(200);
+    })
+    test("Deleteing muneItem",async()=>{
+        const response = await request(app)
+        .delete(`/menu-item/delete/${menuItemId}`)
+        .set("token",token);
+        expect(response.statusCode).toBe(200);
+    })
+    test("Deleting menuCategory",async()=>{
+        const response = await request(app)
+        .delete(`/menu-category/delete/${categoryId}`)
+        .set("token",token)
+        expect(response.statusCode).toBe(200);
     })
     test("Deleting outlet",async()=>{
         const response = await request(app)
