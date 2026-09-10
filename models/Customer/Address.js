@@ -53,6 +53,11 @@ const addressSchema = new mongoose.Schema(
         isDefault:{
             type:Boolean,
             default:false
+        },
+        customerId:{
+            type:mongoose.Schema.Types.ObjectId,
+            ref:"Customer",
+            required:true
         }
     },
     {
