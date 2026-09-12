@@ -85,6 +85,7 @@ const googleLogin = async(req,res)=>{
         const token = jwt.sign(
             {
                 id:vendor._id,
+                role:"vendor",
                 sessionId:sessionId
             },
             process.env.JWT_SECRET,
@@ -177,7 +178,17 @@ const loginVendor = async (req, res) => {
         await redisClient.set(
             `vendor:session:${vendor._id}`,sessionId, { EX:1800}
         )
-        const token = jwt.sign({ id: vendor._id,sessionId:sessionId }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        const token = jwt.sign(
+            {
+                id: vendor._id,
+                role:"vendor",
+                sessionId:sessionId 
+            },
+            process.env.JWT_SECRET, 
+            { 
+                expiresIn: '1h' 
+            }
+        );
         res.status(200).json({ message: "Vendor logged in successfully", token, vendor });
     } catch (error) {
         console.error(error);
