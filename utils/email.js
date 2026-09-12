@@ -90,5 +90,76 @@ const sendForgotPasswordLink  = async (email,name , resetURL)=>{
     }
     await transporter.sendMail(mailOptions);
 }
-module.exports = {sendWelcomeEmail , sendForgotPasswordLink}
+
+const sendVerificationEmail = async (email, name, verificationURL) => {
+
+    const mailOptions = {
+        from: `"FoodStack" <${process.env.EMAIL_USER}>`,
+        to: email,
+        subject: "Verify your FoodStack email",
+
+        html: `
+            <div style="font-family: Arial, sans-serif; padding: 20px;">
+
+                <h2>Verify your FoodStack Email</h2>
+
+                <p>Hello ${name},</p>
+
+                <p>
+                    Thank you for registering with FoodStack.
+                </p>
+
+                <p>
+                    Please verify your email address by clicking the button below.
+                </p>
+
+                <a
+                    href="${verificationURL}"
+                    target="_blank"
+                    style="
+                        display: inline-block;
+                        padding: 12px 20px;
+                        background-color: #000000;
+                        color: #ffffff;
+                        text-decoration: none;
+                        border-radius: 5px;
+                    "
+                >
+                    Verify Email
+                </a>
+
+                <p>
+                    This verification link will expire in 10 minutes.
+                </p>
+
+                <p>
+                    If the button doesn't work, use this link:
+                </p>
+
+                <p>
+                    <a href="${verificationURL}" target="_blank">
+                        ${verificationURL}
+                    </a>
+                </p>
+
+                <p>
+                    If you did not create this account, you can safely ignore this email.
+                </p>
+
+                <br>
+
+                <p>
+                    Regards,<br>
+                    <strong>FoodStack Team</strong>
+                </p>
+
+            </div>
+        `
+    };
+
+    await transporter.sendMail(mailOptions);
+};
+
+
+module.exports = {sendWelcomeEmail , sendForgotPasswordLink ,sendVerificationEmail }
 

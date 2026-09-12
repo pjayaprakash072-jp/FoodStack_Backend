@@ -1,6 +1,7 @@
 const Customer = require('../../models/Customer/Customer')
 const bcrypt = require('bcryptjs');
-const { sendWelcomeEmail } = require('../../utils/email');
+const crypto = require('crypto')
+const { sendWelcomeEmail , sendVerificationEmail} = require('../../utils/email');
 const { redisClient } = require('../../config/redis');
 const jwt = require("jsonwebtoken")
 
@@ -29,25 +30,33 @@ const createCustomer = async(req,res)=>{
             url:"",
             public_id:""
         }
+        const verificationToken = crypto.randomBytes(32).toString("hex");
+        const verificationTokenExpires = new Date(
+            Date.now()+ 10*60*1000
+        )
         const customer = new Customer(
             {
                 name,
-                email,
+                email:email.toLowerCase(),
                 password:hashedPassword,
                 phone,
                 profileImg,
-                authProvider:"local"
+                authProvider:"local",
+                emailVerificationToken:verificationToken,
+                emailVerificationExpires:verificationTokenExpires
             }
         )
         await customer.save();
+        const verificationURL = `${process.env.BACKEND_URL}/customer/verify-email/${verificationToken}`
+        console.log(verificationURL);
         try{
-            await sendWelcomeEmail(email,name);
+            await sendVerificationEmail(email,name,verificationURL);
         }catch(err){
             console.log("Email send failed",err)
         }
     res.status(201).json(
         {
-            message:"Customer Created Successfull!",customer
+            message:"Customer Created Successfull! Please Verify email",customer
         }
     )
     }catch(err){
@@ -65,9 +74,16 @@ const loginCustomer = async(req,res)=>{
         const {email,password} = req.body;
         const customer = await Customer.findOne({email});
         if(!customer){
-            return req.status(400).json(
+            return res.status(400).json(
                 {
                     message: "Customer is not found"
+                }
+            )
+        }
+        if(!customer.isVerified){
+            return res.status(400).json(
+                {
+                    message:"Please verify your email before logging in."
                 }
             )
         }
@@ -108,7 +124,52 @@ const loginCustomer = async(req,res)=>{
     }
 }
 
+
+const verifyCustomerEmail = async(req,res)=>{
+    try {
+        const {verificationToken} = req.params;
+        const customer = await Customer.findOne(
+            {
+                emailVerificationToken:verificationToken
+            }
+        )
+        if(!customer){
+            return res.status(400).json(
+                {
+                    message:"Invalid verification link."
+                }
+            )
+        }
+        if(!customer.emailVerificationExpires || customer.emailVerificationExpires < new Date()){
+            return res.status(400).json(
+                {
+                    message:"Verification link has expired."
+                }
+            )
+        }
+        customer.isVerified = true;
+        customer.emailVerificationToken = null;
+        customer.emailVerificationExpires= null;
+
+        await customer.save();
+        res.status(200).json(
+            {
+                message:"Email verified successfully!"
+            }
+        )
+
+    } catch (error) {
+        console.log("Email Verification Error",error);
+        res.status(500).json(
+            {
+                message:"Internal server Error",
+                error:error.message
+            }
+        )
+    }
+}
 module.exports = {
     createCustomer,
+    verifyCustomerEmail,
     loginCustomer
 }
