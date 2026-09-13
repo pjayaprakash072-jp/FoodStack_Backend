@@ -81,9 +81,22 @@ const loginCustomer = async(req,res)=>{
             )
         }
         if(!customer.isVerified){
+            const verificationToken = crypto.randomBytes(32).toString("hex");
+            const verificationTokenExpires = new Date(
+                Date.now()+10*60*1000
+            )
+            customer.emailVerificationToken = verificationToken;
+            customer.emailVerificationExpires = verificationTokenExpires;
+            customer.save();
+            const verificationURL = `${process.env.BACKEND_URL}/customer/verify-email/${verificationToken}`
+            try{
+                await sendVerificationEmail(email,customer.name,verificationURL)
+            }catch(err){
+                console.log("Email sent Failed")
+            }
             return res.status(400).json(
                 {
-                    message:"Please verify your email before logging in."
+                    message:"Verification link is sent ot your email,Please verify your email before logging in."
                 }
             )
         }
