@@ -4,11 +4,11 @@ const { createVendor, getAllVendors, getVendorById, updateVendor, deleteVendor,l
 
 const upload = require("../middleware/upload")
 const verifyToken = require("../middleware/verifyToken");
-
+const authorizeRoles = require("../middleware/authroizeRoles")
 router.post("/create", upload.single("profileImg"), createVendor);
 router.get("/getall", getAllVendors);
 router.get("/get/:id", getVendorById);
-router.put("/update",verifyToken, upload.single("profileImg"), updateVendor);
+router.put("/update",verifyToken, authorizeRoles("vendor"), upload.single("profileImg"), updateVendor);
 router.delete("/delete/:id", deleteVendor);
 router.post("/login", loginVendor);
 router.post("/forgot-password",forgotPassword);

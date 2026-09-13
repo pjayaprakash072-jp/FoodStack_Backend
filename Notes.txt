@@ -349,3 +349,33 @@ loadBalencer:
 Testing
 ============
 npx jest tests/vendor.test.js --runInBand -- used to run only one file.
+
+
+FoodStack IAM architecture.
+==========================
+                     REQUEST
+                        │
+                        ▼
+                  JWT Validation
+                        │
+                        ▼
+                 Identify User
+                        │
+                        ▼
+                     Role
+                        │
+          ┌─────────────┼─────────────┐
+          ▼             ▼             ▼
+      Customer        Vendor         Admin
+          │             │             │
+          ▼             ▼             ▼
+      Customer       Vendor APIs    Admin APIs
+       APIs              │
+                         ▼
+                  Resource Ownership
+                         │
+                    ┌────┴────┐
+                    ▼         ▼
+                  Owner    Not Owner
+                    │         │
+                  ALLOW      DENYus

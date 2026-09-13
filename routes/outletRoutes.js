@@ -5,12 +5,12 @@ const express = require("express");
 const router = express.Router();
 
 const verifyToken = require("../middleware/verifyToken");
-
-router.post("/create", verifyToken, upload.single("image"), outletController.createOutlet);
+const authorizeRoles = require("../middleware/authroizeRoles")
+router.post("/create", verifyToken, authorizeRoles("vendor"), upload.single("image"), outletController.createOutlet);
 router.get("/getall", outletController.getAllOutlets);
 router.get("/get/:id", outletController.getOutletById);
 router.get("/vendor/:vendorId", outletController.getOutletsByVendorId);
-router.put("/update/:id", verifyToken, upload.single("image"), outletController.updateOutlet);
-router.delete("/delete/:id", verifyToken, outletController.deleteOutlet);
+router.put("/update/:id", verifyToken, authorizeRoles("vendor"), upload.single("image"), outletController.updateOutlet);
+router.delete("/delete/:id", verifyToken, authorizeRoles("vendor"), outletController.deleteOutlet);
 
 module.exports = router;

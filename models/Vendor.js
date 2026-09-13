@@ -2,6 +2,11 @@ const mongoose = require('mongoose')
 const Outlet = require('../models/Outlet')
 const vendorSchema = new mongoose.Schema(
     {
+        role:{
+            type:String,
+            enum:["vendor"],
+            default:"vendor"
+        },
         name:{
             type:String,
             required: true
