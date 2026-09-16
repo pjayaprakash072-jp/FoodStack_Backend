@@ -1,0 +1,34 @@
+Order
+│
+├── customerId
+│      └── Customer
+│
+├── outletId
+│      └── Outlet
+│
+├── items[]
+│      ├── menuItemId
+│      │      └── MenuItem
+│      ├── name
+│      ├── price
+│      ├── quantity
+│      └── subTotal
+│
+├── deliveryAddress
+│      ├── fullName
+│      ├── phone
+│      ├── addressLine1
+│      ├── addressLine2
+│      ├── city
+│      ├── state
+│      └── pincode
+│
+├── subTotal
+├── deliveryFee
+├── tax
+├── discount
+├── totalAmount
+│
+├── paymentMethod
+├── paymentStatus
+└── orderStatus

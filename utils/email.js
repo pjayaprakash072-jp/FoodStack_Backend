@@ -99,7 +99,6 @@ const sendVerificationEmail = async (email, name, verificationURL) => {
         subject: "Verify your FoodStack email",
 
         html: `
-            <div style="font-family: Arial, sans-serif; padding: 20px;">
 
                 <h2>Verify your FoodStack Email</h2>
 
@@ -115,7 +114,6 @@ const sendVerificationEmail = async (email, name, verificationURL) => {
 
                 <a
                     href="${verificationURL}"
-                    target="_blank"
                     style="
                         display: inline-block;
                         padding: 12px 20px;
@@ -152,8 +150,6 @@ const sendVerificationEmail = async (email, name, verificationURL) => {
                     Regards,<br>
                     <strong>FoodStack Team</strong>
                 </p>
-
-            </div>
         `
     };
 

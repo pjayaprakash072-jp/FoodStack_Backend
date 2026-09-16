@@ -8,7 +8,7 @@ const cloudinary = require('../config/cloudinary');
 const {sendWelcomeEmail, sendForgotPasswordLink}  =  require('../utils/email')
 const crypto = require('crypto')
 const {OAuth2Client } = require('google-auth-library')
-const { redisClient } = require("../config/redis")
+const {setCache} = require("../utils/cache")
 
 const googleClient = new OAuth2Client(
     process.env.GOOGLE_CLIENT_ID
@@ -79,9 +79,11 @@ const googleLogin = async(req,res)=>{
         // create jwt for frontend inclueding sessionId to prevent multiple tabs.
 
         const sessionId = crypto.randomUUID();
-        await redisClient.set(
-            `vendor:session:${vendor._id}`,sessionId, { EX:1800}
-        )
+        // await redisClient.set(
+        //     `vendor:session:${vendor._id}`,sessionId, { EX:1800}
+        // )
+        const cacheKey = `${vendor.role}:session:${vendor._id}`;
+        await setCache(cacheKey,sessionId,1800)
         const token = jwt.sign(
             {
                 id:vendor._id,
@@ -175,8 +177,10 @@ const loginVendor = async (req, res) => {
             return res.status(401).json({ message: "Invalid credentials" });
         }
         const sessionId = crypto.randomUUID();
-        await redisClient.set(
-            `${vendor.role}:session:${vendor._id}`,sessionId, { EX:1800}
+        await setCache(
+            `${vendor.role}:session:${vendor._id}`,
+            sessionId,
+            1800
         )
         const token = jwt.sign(
             {

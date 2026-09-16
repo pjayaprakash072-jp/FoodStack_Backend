@@ -62,7 +62,20 @@ const userSchema = new mongoose.Schema(
         emailVerificationExpires:{
             type:Date,
             default:null
-        }
+        },
+        cart:[
+            {
+                item:{
+                    type:mongoose.Schema.Types.ObjectId,
+                    ref:"MenuItem"
+                },
+                quantity:{
+                    type:Number,
+                    default:1,
+                    min:1
+                }
+            }
+        ]
     },
     {
         timestamps:true

@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const Vendor = require('../models/Vendor');
+const User = require("../models/User/User")
 const {redisClient} = require('../config/redis')
 
 const verifyToken = async (req, res, next) => {
@@ -57,9 +58,11 @@ const verifyToken = async (req, res, next) => {
         req.role = decoded.role;
         if(decoded.role ==="vendor"){
             req.vendorId = decoded.id;
+            req.vendor = await Vendor.findById(decoded.id)
         }
         if(decoded.role === "user"){
             req.userId = decoded.id;
+            req.user = await User.findById(decoded.id)
         }
         next();
     } catch (err) {

@@ -2,7 +2,7 @@ const User = require('../../models/User/User')
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto')
 const { sendWelcomeEmail , sendVerificationEmail} = require('../../utils/email');
-const { redisClient } = require('../../config/redis');
+const {setCache} = require('../../utils/cache')
 const jwt = require("jsonwebtoken")
 
 const createUser = async(req,res)=>{
@@ -13,6 +13,13 @@ const createUser = async(req,res)=>{
             password,
             phone
         } = req.body;
+        if(!name || !email|| !password){
+            return res.status(400).json(
+                {
+                    message:"Name, email and password are required!"
+                }
+            )
+        }
         const existingUser = await User.findOne({email:email.toLowerCase()});
         if(existingUser){
             return res.status(400).json(
@@ -100,17 +107,19 @@ const loginUser = async(req,res)=>{
                 }
             )
         }
-        const isMatch = await bcrypt.compare(password,user.password);
+        const isMatch = await bcrypt.compare(password || "",user.password);
         if(!isMatch){
             return res.status(401).json(
                 {
-                    message:"Invalid Credentials"
+                    message:"Invalid Email or password"
                 }
             )
         }
         const sessionId = crypto.randomUUID();
-        await redisClient.set(
-            `user:sessionId:${sessionId}`,sessionId,{EX:1800}
+        await setCache(
+            `${user.role}:sessionId:${sessionId}`,
+            sessionId,
+            1800
         )
         const token = jwt.sign(
             {
