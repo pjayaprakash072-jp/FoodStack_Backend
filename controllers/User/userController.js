@@ -1,11 +1,11 @@
-const Customer = require('../../models/Customer/Customer')
+const User = require('../../models/User/User')
 const bcrypt = require('bcryptjs');
 const crypto = require('crypto')
 const { sendWelcomeEmail , sendVerificationEmail} = require('../../utils/email');
 const { redisClient } = require('../../config/redis');
 const jwt = require("jsonwebtoken")
 
-const createCustomer = async(req,res)=>{
+const createUser = async(req,res)=>{
     try{
         const {
             name,
@@ -13,11 +13,11 @@ const createCustomer = async(req,res)=>{
             password,
             phone
         } = req.body;
-        const existingCustomer = await Customer.findOne({email:email.toLowerCase()});
-        if(existingCustomer){
+        const existingUser = await User.findOne({email:email.toLowerCase()});
+        if(existingUser){
             return res.status(400).json(
                 {
-                    message:"Customer with this email already Existe."
+                    message:"User with this email already Existe."
                 }
             )
         }
@@ -34,7 +34,7 @@ const createCustomer = async(req,res)=>{
         const verificationTokenExpires = new Date(
             Date.now()+ 10*60*1000
         )
-        const customer = new Customer(
+        const user = new User(
             {
                 name,
                 email:email.toLowerCase(),
@@ -46,8 +46,8 @@ const createCustomer = async(req,res)=>{
                 emailVerificationExpires:verificationTokenExpires
             }
         )
-        await customer.save();
-        const verificationURL = `${process.env.BACKEND_URL}/customer/verify-email/${verificationToken}`
+        await user.save();
+        const verificationURL = `${process.env.BACKEND_URL}/user/verify-email/${verificationToken}`
         console.log(verificationURL);
         try{
             await sendVerificationEmail(email,name,verificationURL);
@@ -56,7 +56,7 @@ const createCustomer = async(req,res)=>{
         }
     res.status(201).json(
         {
-            message:"Customer Created Successfull! Please Verify email",customer
+            message:"user Created Successfull! Please Verify email",user
         }
     )
     }catch(err){
@@ -69,28 +69,28 @@ const createCustomer = async(req,res)=>{
     }
 }
 
-const loginCustomer = async(req,res)=>{
+const loginUser = async(req,res)=>{
     try {
         const {email,password} = req.body;
-        const customer = await Customer.findOne({email});
-        if(!customer){
+        const user = await User.findOne({email});
+        if(!user){
             return res.status(400).json(
                 {
-                    message: "Customer is not found"
+                    message: "User is not found"
                 }
             )
         }
-        if(!customer.isVerified){
+        if(!user.isVerified){
             const verificationToken = crypto.randomBytes(32).toString("hex");
             const verificationTokenExpires = new Date(
                 Date.now()+10*60*1000
             )
-            customer.emailVerificationToken = verificationToken;
-            customer.emailVerificationExpires = verificationTokenExpires;
-            customer.save();
-            const verificationURL = `${process.env.BACKEND_URL}/customer/verify-email/${verificationToken}`
+            user.emailVerificationToken = verificationToken;
+            user.emailVerificationExpires = verificationTokenExpires;
+            user.save();
+            const verificationURL = `${process.env.BACKEND_URL}/user/verify-email/${verificationToken}`
             try{
-                await sendVerificationEmail(email,customer.name,verificationURL)
+                await sendVerificationEmail(email,user.name,verificationURL)
             }catch(err){
                 console.log("Email sent Failed")
             }
@@ -100,7 +100,7 @@ const loginCustomer = async(req,res)=>{
                 }
             )
         }
-        const isMatch = await bcrypt.compare(password,customer.password);
+        const isMatch = await bcrypt.compare(password,user.password);
         if(!isMatch){
             return res.status(401).json(
                 {
@@ -110,12 +110,12 @@ const loginCustomer = async(req,res)=>{
         }
         const sessionId = crypto.randomUUID();
         await redisClient.set(
-            `customer:sessionId:${sessionId}`,sessionId,{EX:1800}
+            `user:sessionId:${sessionId}`,sessionId,{EX:1800}
         )
         const token = jwt.sign(
             {
-                id:customer._id,
-                role:customer.role,
+                id:user._id,
+                role:user.role,
                 sessionId:sessionId
             },process.env.JWT_SECRET,
             {
@@ -124,11 +124,11 @@ const loginCustomer = async(req,res)=>{
         )
         res.status(200).json(
             {
-                message:"Customer logged in successfully!",token,customer
+                message:"User logged in successfully!",token,user
             }
         )
     } catch (error) {
-        console.log("Error in Customer LoginP",error);
+        console.log("Error in User LoginP",error);
         res.status(500).json(
             {
                 message:"Internal server Error",error:error.message
@@ -138,33 +138,33 @@ const loginCustomer = async(req,res)=>{
 }
 
 
-const verifyCustomerEmail = async(req,res)=>{
+const verifyUserEmail = async(req,res)=>{
     try {
         const {verificationToken} = req.params;
-        const customer = await Customer.findOne(
+        const user = await User.findOne(
             {
                 emailVerificationToken:verificationToken
             }
         )
-        if(!customer){
+        if(!user){
             return res.status(400).json(
                 {
                     message:"Invalid verification link."
                 }
             )
         }
-        if(!customer.emailVerificationExpires || customer.emailVerificationExpires < new Date()){
+        if(!user.emailVerificationExpires || user.emailVerificationExpires < new Date()){
             return res.status(400).json(
                 {
                     message:"Verification link has expired."
                 }
             )
         }
-        customer.isVerified = true;
-        customer.emailVerificationToken = null;
-        customer.emailVerificationExpires= null;
+        user.isVerified = true;
+        user.emailVerificationToken = null;
+        user.emailVerificationExpires= null;
 
-        await customer.save();
+        await user.save();
         res.status(200).json(
             {
                 message:"Email verified successfully!"
@@ -182,7 +182,7 @@ const verifyCustomerEmail = async(req,res)=>{
     }
 }
 module.exports = {
-    createCustomer,
-    verifyCustomerEmail,
-    loginCustomer
+    createUser,
+    verifyUserEmail,
+    loginUser
 }

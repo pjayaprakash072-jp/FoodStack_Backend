@@ -54,9 +54,9 @@ const addressSchema = new mongoose.Schema(
             type:Boolean,
             default:false
         },
-        customerId:{
+        user:{
             type:mongoose.Schema.Types.ObjectId,
-            ref:"Customer",
+            ref:"User",
             required:true
         }
     },

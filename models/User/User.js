@@ -1,10 +1,10 @@
 const mongoose = require('mongoose')
-const customerSchema = new mongoose.Schema(
+const userSchema = new mongoose.Schema(
     {
         role:{
             type:String,
-            enum:["customer"],
-            default:"customer"
+            enum:["user"],
+            default:"user"
         }
         ,
         name:{
@@ -69,4 +69,4 @@ const customerSchema = new mongoose.Schema(
     }
 )
 
-module.exports = mongoose.model("Customer",customerSchema);
+module.exports = mongoose.model("User",userSchema);

@@ -58,8 +58,8 @@ const verifyToken = async (req, res, next) => {
         if(decoded.role ==="vendor"){
             req.vendorId = decoded.id;
         }
-        if(decoded.role === "customer"){
-            req.customerId = decoded.id;
+        if(decoded.role === "user"){
+            req.userId = decoded.id;
         }
         next();
     } catch (err) {
