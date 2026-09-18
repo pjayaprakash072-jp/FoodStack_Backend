@@ -379,3 +379,31 @@ FoodStack IAM architecture.
                   Owner    Not Owner
                     │         │
                   ALLOW      DENYus
+
+
+WEB SOCKETS
+===========
+FoodStack flow
+
+Customer React App
+       │
+       │ WebSocket connection
+       ▼
+Node + Express Backend
+       │
+       │ Socket.IO
+       ▼
+MongoDB
+
+
+For order tracking:
+Customer                         Backend                         Vendor
+   │                                │                              │
+   │──── connect socket ───────────►│                              │
+   │                                │◄──── connect socket ──────────│
+   │                                │                              │
+   │                                │◄── "Preparing" ──────────────│
+   │◄──── orderStatusChanged ──────│                              │
+   │                                │                              │
+   │                                │◄── "Out for delivery" ──────│
+   │◄──── orderStatusChanged ──────│                              │

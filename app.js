@@ -9,7 +9,8 @@ const vendorRoutes = require("./routes/vendorRoutes");
 const outletRoutes = require("./routes/outletRoutes");
 const menuCategoryRoutes = require("./routes/menuCategoryRoutes");
 const menuItemRoutes = require("./routes/menuItemRoutes");
-const user = require('./routes/User/userRoutes')
+const userRoutes = require('./routes/User/userRoutes')
+const cartRoutes = require("./routes/User/cartRoutes")
 
 
 const { redisClient } = require("./config/redis")
@@ -28,7 +29,8 @@ app.use("/vendor", vendorRoutes);
 app.use("/outlet", outletRoutes);
 app.use("/menu-category", menuCategoryRoutes);
 app.use("/menu-item", menuItemRoutes);
-app.use("/user",user)
+app.use("/user",userRoutes)
+app.use("/cart",cartRoutes)
 // HOME route.
 app.get('/',(req,res)=>{
     res.send("Welcome to FoodStack!")
