@@ -1,6 +1,6 @@
 const authorizeRoles = (...allowedRoles)=>{
     return (req,res,next)=>{
-        if(!req.role){
+        if(!req.role){ // we are setting role to req in teh verify token , role is coming along with the token and asigned in token creation.
             return res.status(401).json(
                 {
                     message:"Authentication Required!"
