@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken');
 const Vendor = require('../models/Vendor');
 const User = require("../models/User/User")
-const {redisClient} = require('../config/redis')
+const {getCache} = require('../utils/cache')
 
 const verifyToken = async (req, res, next) => {
 
@@ -37,9 +37,18 @@ const verifyToken = async (req, res, next) => {
             )
         }
         // 4. Check session in Redis.
-        const currentSession = await redisClient.get(
+        
+        const currentSession = await getCache(
             `${decoded.role}:session:${decoded.id}`
         )
+
+
+        // console.log("JWT session:", decoded.sessionId);
+        // console.log("Redis session:", currentSession);
+        // console.log("User ID:", decoded.id);
+        // console.log("Role:", decoded.role);
+
+
         if(!currentSession){
             return res.status(401).json(
                 {

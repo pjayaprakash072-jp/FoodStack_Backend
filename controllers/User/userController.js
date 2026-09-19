@@ -117,9 +117,9 @@ const loginUser = async(req,res)=>{
         }
         const sessionId = crypto.randomUUID();
         await setCache(
-            `${user.role}:sessionId:${sessionId}`,
+            `${user.role}:session:${user._id}`,
             sessionId,
-            1800
+            3600
         )
         const token = jwt.sign(
             {

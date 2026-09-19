@@ -2,7 +2,7 @@ const Address = require("../../models/User/Address")
 
 const createAddress = async (req,res)=>{
     try {
-        if(rea.role != "user"){
+        if(req.role != "user"){
             return res.status(400).json(
                 {
                     meassage:"Only users can create the Address."
@@ -19,7 +19,7 @@ const createAddress = async (req,res)=>{
             state,
             pincode,
             latitude,
-            logitude,
+            longitude,
             isDefault
         } = req.body;
         const address = new Address(
@@ -33,7 +33,7 @@ const createAddress = async (req,res)=>{
                 state,
                 pincode,
                 latitude,
-                logitude,
+                longitude,
                 isDefault,
                 user:req.userId
             }
