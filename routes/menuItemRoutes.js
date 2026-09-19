@@ -1,7 +1,7 @@
 const menuItemController = require('../controllers/menuItemController');
 const upload = require('../middleware/upload');
 const verifyToken = require("../middleware/verifyToken");
-const authorizeRoles = require("../middleware/authroizeRoles")
+const authorizeRoles = require("../middleware/authorizeRoles")
 const router = require('express').Router();
 
 router.post('/add/:categoryId',verifyToken,authorizeRoles("vendor"), upload.single('image'),menuItemController.createMenuItem);

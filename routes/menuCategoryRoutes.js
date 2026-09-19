@@ -3,7 +3,7 @@ const express = require('express');
 const router = express.Router();
 const upload = require('../middleware/upload');
 const verifyToken = require("../middleware/verifyToken");
-const authorizeRoles = require("../middleware/authroizeRoles")
+const authorizeRoles = require("../middleware/authorizeRoles")
 
 router.post('/create/:outletId',verifyToken,authorizeRoles("vendor"),  upload.single('image'), menuCategoryController.createMenuCategory);
 router.get('/vendor/:vendorId', menuCategoryController.getMenuCategoriesByVendor);
