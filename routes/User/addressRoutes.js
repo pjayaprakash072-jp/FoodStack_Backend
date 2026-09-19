@@ -15,3 +15,6 @@ router.get('/getall',verifyToken,authorizeRoles("user"),getAddresses);
 router.get('/:addressId',verifyToken,authorizeRoles("user"),getOneAddress);
 router.put('/update/:addressId',verifyToken,authorizeRoles("user"),updateAddress)
 router.delete('/delete/:addressId',verifyToken,authorizeRoles("user"),delteAddress)
+
+
+module.exports = router
