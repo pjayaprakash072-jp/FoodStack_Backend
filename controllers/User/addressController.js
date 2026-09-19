@@ -1,6 +1,7 @@
 const Address = require("../../models/User/Address")
 
 const createAddress = async (req,res)=>{
+    // console.log(req.body);
     try {
         if(req.role != "user"){
             return res.status(400).json(
@@ -38,6 +39,17 @@ const createAddress = async (req,res)=>{
                 user:req.userId
             }
         )
+        if(isDefault === true){
+            await Address.updateMany(
+                {
+                    user:req.userId,
+                },{
+                    $set:{
+                        isDefault:false
+                    }
+                }
+            )
+        }
         await address.save();
         res.status(201).json(
             {
@@ -49,7 +61,7 @@ const createAddress = async (req,res)=>{
         console.log("Error", error);
         res.status(500).json(
             {
-                message:"Internal server Error, Failed to Create Address.",
+                message:"Internal server Erjror, Failed to Create Address.",
                 error:error.message
             }
         )
