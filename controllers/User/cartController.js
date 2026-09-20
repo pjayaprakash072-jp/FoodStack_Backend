@@ -100,7 +100,7 @@ const updateCart = async(req,res)=>{
                 }
             },
             {
-                new:true
+                returnDocument: "after"
             }
         ).populate("cart.item");
         if(!user){
@@ -136,7 +136,7 @@ const clearCart = async(req,res)=>{
                 }
             },
             {
-                new:true
+                returnDocument: "after"
             }
         )
         res.status(200).json(
@@ -154,10 +154,55 @@ const clearCart = async(req,res)=>{
         )
     }
 }
+const mergeCart = async(req,res)=>{
+    try {
+        const guestItems = Array.isArray(req.body.items)?req.body.items : [];
+        const user = await User.findById(req.userId);
+        if(!user){
+            return res.status(400).json(
+                {
+                    message:"user not found"
+                }
+            )
+        }
+        for(const guestItem of guestItems){
+            const itemId = guestItem._id;
+            const quantity = Math.max(1,Number(guestItem.quantity) || 1);
+            const existingItem = user.cart.find(
+                (x)=>x.item.toString() === itemId
+            )
+            if(existingItem){
+                existingItem.quantity += quantity;
+            }else{
+                const item = await MenuItem.findById(itemId)
+                if(!item){
+                    continue;
+                }
+                user.cart.push(
+                    {
+                        item:itemId,
+                        quantity
+                    }
+                )
+            }
+        }
+        await user.save();
+        await user.populate("cart.item")
+        res.status(200).json(
+            {
+                message:"Cart merged successfully!",
+                cartItems:user.cart
+            }
+        )
+    } catch (error) {
+        
+    }
+}
 module.exports = {
     getCartItems,
     addCartItem,
     updateCart,
     clearCart,
-    removeItem
+    removeItem,
+    mergeCart
 }
