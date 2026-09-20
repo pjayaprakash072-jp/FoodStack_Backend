@@ -3,7 +3,7 @@
 const MenuItem = require('../../models/MenuItem')
 const Address = require('../../models/User/Address')
 const Order = require('../../models/User/Order')
-
+const User = require('../../models/User/User')
 const createOrder = async(req,res)=>{
 
     try {
@@ -15,7 +15,7 @@ const createOrder = async(req,res)=>{
         )
         const items = [];
         for(const x of cartItems){
-            const id = x._id;
+            const id = x.item;
             const item = await MenuItem.findById(id);
             if(!item) return res.status(400).json(
                 {
@@ -72,6 +72,16 @@ const createOrder = async(req,res)=>{
                 orderStatus:"placed"
             }
         )
+        const user = await User.findById(req.userId);
+        if(!user){
+            return res.status(400).json(
+                {
+                    message:"User not found to add Order id while creating order."
+                }
+            )
+        }
+        user.orders.push(order._id);
+        await user.save();
         await order.save();
         res.status(201).json(
             {

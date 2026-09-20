@@ -9,17 +9,22 @@ const cartSchema = new mongoose.Schema(
         },
         items:[
             {
-                menuItemId:{
+                item:{
                     type: mongoose.Schema.Types.ObjectId,
                     ref:"MenuItem",
                     required:true
+                },
+                price:{
+                    type:Number,
+                    required:true,
+                    min:0
                 },
                 quantity:{
                     type:Number,
                     required:true,
                     min:1
                 },
-                price:{
+                subTotal:{
                     type:Number,
                     required:true,
                     min:0
