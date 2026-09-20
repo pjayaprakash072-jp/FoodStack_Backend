@@ -1,4 +1,28 @@
 const mongoose = require('mongoose')
+const itemSchema = new mongoose.Schema(
+    {
+        item:{
+            type: mongoose.Schema.Types.ObjectId,
+            ref:"MenuItem",
+            required:true
+        },
+        name:{
+            type:String,
+            required:true,
+            trim:true
+        },
+        price:{
+            type:Number,
+            required:true,
+            min:0
+        },
+        quantity:{
+            type:Number,
+            required:true,
+            min:1
+        }
+    }
+)
 const orderSchema = new mongoose.Schema(
     {
         user:{
@@ -6,76 +30,10 @@ const orderSchema = new mongoose.Schema(
             ref:"User",
             required:true
         },
-        outletId:{
-            type:mongoose.Schema.Types.ObjectId,
-            ref:"Outlet",
-            required:true
-        },
-        items:[
-            {
-                menuItemId:{
-                    type: mongoose.Schema.Types.ObjectId,
-                    ref:"MenuItem",
-                    required:true
-                },
-                name:{
-                    type:String,
-                    required:true,
-                    trim:true
-                },
-                price:{
-                    type:Number,
-                    required:true,
-                    min:0
-                },
-                quantity:{
-                    type:Number,
-                    required:true,
-                    min:1
-                },
-                subTotal:{
-                    type:Number,
-                    required:true,
-                    min:0
-                }
-            }
-        ],
+        items:[itemSchema],
         deliveryAddress:{
-            fullName:{
-                type:String,
-                required:true,
-                trim:true
-            },
-            phone:{
-                type:String,
-                required:true,
-                trim:true
-            },
-            addressLine1:{
-                type:String,
-                required:true,
-                trim:true
-            },
-            addressLine2:{
-                type:String,
-                default:"",
-                trim:true
-            },
-            city:{
-                type:String,
-                required:true,
-                trim:true
-            },
-            state:{
-                type:String,
-                required:true,
-                trim:true
-            },
-            pincode:{
-                type:String,
-                required:true,
-                trim:true
-            }
+            type:String,
+            default:""
         },
         subTotal:{
             type:Number,
@@ -89,7 +47,6 @@ const orderSchema = new mongoose.Schema(
         },
         tax:{
             type:Number,
-            required:true,
             min:0
         },
         discount:{
