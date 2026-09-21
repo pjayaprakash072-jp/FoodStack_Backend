@@ -103,7 +103,7 @@ const getAllMenuItems = async (req, res) => {
             )
         }
         console.log("Redis CACHE MISS - getAllMenuItems");
-        const menuItems = await MenuItem.find();
+        const menuItems = await MenuItem.find().populate("outlet");
         await setCache(cacheKey, menuItems,300);
         res.status(200).json(
             {
@@ -182,7 +182,7 @@ const getMenuitemsByOutlet = async (req, res) => {
             )
         }
         console.log("Redis CACHE MISS - getAllMenuItemsByOutlet");
-        const menuItems = await MenuItem.find({ outlet: outletId });
+        const menuItems = await MenuItem.find({ outlet: outletId }).populate("outlet");
         if (!menuItems) {
             return res.status(404).json(
                 {
@@ -225,7 +225,7 @@ const getMenuItemsByCategory = async (req, res) => {
             )
         }
         console.log("Redis CACHE MISS - getAllMenuItemsByCategory");
-        const menuItems = await MenuItem.find({ category: categoryId });
+        const menuItems = await MenuItem.find({ category: categoryId }).populate("outlet");
         if (!menuItems) {
             return res.status(404).json(
                 { 

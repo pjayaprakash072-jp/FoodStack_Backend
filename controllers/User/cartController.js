@@ -4,7 +4,7 @@ const MenuItem = require('../../models/MenuItem')
 const getCartItems = async (req,res)=>{
     try {
         const userId = req.user._id;
-        const user = await User.findById(userId).populate("cart.item")
+        const user = await User.findById(userId).populate({path:"cart.item",populate:{path:"outlet"}})
         res.status(200).json(
             {
                 message:"Cart Item retrieved successfully!",
@@ -48,7 +48,7 @@ const addCartItem = async (req,res)=>{
             )
         }
         await user.save();
-        await user.populate("cart.item");
+        await user.populate({path:"cart.item",populate:{path:"outlet"}})
         res.status(200).json(
             {
                 message:"Cart Updated Successfully!",
@@ -77,9 +77,11 @@ const removeItem = async(req,res)=>{
                 }
             }
         )
+        const user = await User.findById(req.userId).populate({path:"cart.item",populate:{path:"outlet"}})
         res.status(200).json(
             {
-                message:"Item removed successfully"
+                message:"Item removed successfully, updated cartItems",
+                cartItems:user.cart
             }
         )
         
@@ -109,7 +111,7 @@ const updateCart = async(req,res)=>{
             {
                 returnDocument: "after"
             }
-        ).populate("cart.item");
+        ).populate({path:"cart.item",populate:{path:"outlet"}})
         if(!user){
             return res.status(400).json(
                 {
@@ -195,7 +197,7 @@ const mergeCart = async(req,res)=>{
             }
         }
         await user.save();
-        await user.populate("cart.item")
+        await user.populate({path:"cart.item",populate:{path:"outlet"}})
         res.status(200).json(
             {
                 message:"Cart merged successfully!",

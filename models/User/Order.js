@@ -30,6 +30,11 @@ const orderSchema = new mongoose.Schema(
             ref:"User",
             required:true
         },
+        outlet:{
+            type:mongoose.Schema.Types.ObjectId,
+            required:true,
+            ref:"Outlet"
+        },
         items:[itemSchema],
         deliveryAddress:{
             type:String,

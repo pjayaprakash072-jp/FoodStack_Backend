@@ -63,6 +63,7 @@ const createOrder = async(req,res)=>{
         const order = new Order(
             {
                 user:req.userId,
+                outlet:req.body.outlet,
                 items,
                 deliveryAddress,
                 subTotal,
