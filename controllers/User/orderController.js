@@ -15,7 +15,8 @@ const createOrder = async(req,res)=>{
         )
         const items = [];
         for(const x of cartItems){
-            const id = x.item;
+            const id = x._id;
+            
             const item = await MenuItem.findById(id);
             if(!item) return res.status(400).json(
                 {

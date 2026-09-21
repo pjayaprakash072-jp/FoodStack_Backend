@@ -34,12 +34,19 @@ const addCartItem = async (req,res)=>{
             )
         }
         const user = await User.findById(req.userId);
-        user.cart.push(
-            {
-                item:itemId,
-                quantity:1
-            }
+        const existingItem = user.cart.find(
+            x=> x.item.toString() === itemId.toString()
         )
+        if(existingItem){
+            existingItem.quantity +=1;
+        }else{
+            user.cart.push(
+                {
+                    item:itemId,
+                    quantity:1
+                }
+            )
+        }
         await user.save();
         await user.populate("cart.item");
         res.status(200).json(
@@ -167,6 +174,7 @@ const mergeCart = async(req,res)=>{
         }
         for(const guestItem of guestItems){
             const itemId = guestItem._id;
+            if(!itemId) continue;
             const quantity = Math.max(1,Number(guestItem.quantity) || 1);
             const existingItem = user.cart.find(
                 (x)=>x.item.toString() === itemId
@@ -195,7 +203,13 @@ const mergeCart = async(req,res)=>{
             }
         )
     } catch (error) {
-        
+        console.log("Error",error);
+        res.status(500).json(
+            {
+                message:"Internal server Error, Failed to merge the cart items",
+                error:error.message
+            }
+        )
     }
 }
 module.exports = {
