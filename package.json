@@ -6,10 +6,12 @@
   "scripts": {
     "dev": "nodemon index.js",
     "start": "node index.js",
-    "test":"jest"
+    "test": "jest"
   },
-  "jest":{
-    "setupFilesAfterEnv":["<rootDir>/tests/setup.js"]
+  "jest": {
+    "setupFilesAfterEnv": [
+      "<rootDir>/tests/setup.js"
+    ]
   },
   "keywords": [],
   "author": "",
@@ -28,11 +30,12 @@
     "multer": "^2.2.0",
     "multer-storage-cloudinary": "^4.0.0",
     "nodemailer": "^9.0.5",
+    "razorpay": "^2.9.8",
     "redis": "^6.2.1",
     "resend": "^6.25.0"
   },
   "devDependencies": {
-    "jest": "^30.5.1",    
+    "jest": "^30.5.1",
     "nodemon": "^3.1.14",
     "supertest": "^7.2.2"
   }
