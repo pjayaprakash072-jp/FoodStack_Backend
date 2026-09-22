@@ -13,6 +13,7 @@ const userRoutes = require('./routes/User/userRoutes')
 const cartRoutes = require("./routes/User/cartRoutes")
 const addressRoutes = require('./routes/User/addressRoutes')
 const orderRoutes = require('./routes/User/orderRoutes')
+const paymentRoutes = require('./routes/User/paymentRoutes')
 
 
 const { redisClient } = require("./config/redis")
@@ -34,7 +35,9 @@ app.use("/menu-item", menuItemRoutes);
 app.use("/user",userRoutes)
 app.use("/cart",cartRoutes)
 app.use("/address",addressRoutes);
-app.use("/order",orderRoutes)
+app.use("/order",orderRoutes);
+app.use("/payment",paymentRoutes)
+
 // HOME route.
 app.get('/',(req,res)=>{
     res.send("Welcome to FoodStack!")
