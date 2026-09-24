@@ -6,6 +6,6 @@ const authorizeRoles = require('../../middleware/authorizeRoles')
 const {createUser,updateUser ,verifyUserEmail, loginUser} = require("../../controllers/User/userController")
 router.post("/create",upload.single("profileImg"),createUser)
 router.get("/verify-email/:verificationToken", verifyUserEmail)
-router.post("/update",verifyToken,authorizeRoles("user"),updateUser)
+router.put("/update",upload.single("profileImg"),verifyToken,authorizeRoles("user"),updateUser)
 router.post("/login",loginUser)
 module.exports= router;
