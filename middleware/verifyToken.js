@@ -16,18 +16,10 @@ const verifyToken = async (req, res, next) => {
             );
         }
         // 2. Verify JWT
-        const decoded = jwt.verify(
+        const decoded = jwt.verify( // if decoded is done -> goes to next step or throws errro and catch will handle error.
             token,
             process.env.JWT_SECRET
         );
-        // const vendor = await Vendor.findById(decoded.id);
-        // if (!vendor) {
-        //     return res.status(404).json(
-        //         {
-        //             message: "Vendor not found." 
-        //         }
-        //     );
-        // }
         // 3. Check role
         if(!decoded.id || !decoded.role){
             return res.status(403).json(
@@ -78,7 +70,8 @@ const verifyToken = async (req, res, next) => {
         console.error(err);
         return res.status(403).json(
             {
-                message: "Token is not valid!" 
+                message: "Internal server error, Token iS InValid! OR session id in not verified.",
+                error: error.message
             }
         );
     }

@@ -112,7 +112,8 @@ const googleLogin = async(req,res)=>{
         console.log("Google login errror",err);
         return res.status(500).json(
             {
-                message:"Internal server error"
+                message:"Internal server error, Failed Google Login!",
+                error:eror.message
             }
         )
     }
@@ -156,11 +157,21 @@ const createVendor = async (req, res) => {
             console.error("Email send failed" , error)
         }
 
-        res.status(201).json({ message: "Vendor created successfully", vendor });
+        res.status(201).json(
+            { 
+                essage: "Vendor created successfully", 
+                vendor 
+            }
+        );
     }
     catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Internal server error", error: error.message });
+        res.status(500).json(
+            {
+                message: "Internal server error, Failed to create Vendor!", 
+                error: error.message 
+            }
+        );
     }
 
 }
@@ -170,7 +181,7 @@ const loginVendor = async (req, res) => {
         const { email, password } = req.body;
         const vendor = await Vendor.findOne({ email });
         if (!vendor) {
-            return res.status(404).json({ message: "Vendor not found" });
+            return res.status(404).json({ message: "Vendor not found, Failed to login!" });
         }
         const isMatch = await bcrypt.compare(password, vendor.password);
         if (!isMatch) {
@@ -193,20 +204,41 @@ const loginVendor = async (req, res) => {
                 expiresIn: '1h' 
             }
         );
-        res.status(200).json({ message: "Vendor logged in successfully", token, vendor });
+        res.status(200).json(
+            { 
+                message: "Vendor logged in successfully", 
+                token, 
+                vendor 
+            }
+        );
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Internal server error", error: error.message });
+        res.status(500).json(
+            { 
+                message: "Internal server error, Failed to Login vendor", 
+                error: error.message 
+            }
+        );
     }
 };
 
 const getAllVendors = async (req, res) => {
     try {
         const vendors = await Vendor.find();
-        res.status(200).json({ message: "Vendors retrieved successfully", vendors });
+        res.status(200).json(
+            { 
+                message: "Vendors retrieved successfully", 
+                vendors 
+            }
+        );
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Internal server error", error: error.message });
+        res.status(500).json(
+            { 
+                message: "Internal server error,Failed to retrievt all vendors!", 
+                error: error.message 
+            }
+        );
     }
 };
 
@@ -215,19 +247,28 @@ const getVendorById = async (req, res) => {
         const vendorId = req.params.id;
         const vendor = await Vendor.findById(vendorId);
         if (!vendor) {
-            return res.status(404).json({ message: "Vendor not found" });
+            return res.status(404).json({ message: "Vendor not found, Failed to retrieve vendor By Id." });
         }
-        res.status(200).json({ message: "Vendor retrieved successfully", vendor });
+        res.status(200).json(
+            { 
+                message: "Vendor retrieved successfully",
+                vendor 
+            }
+        );
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Internal server error", error: error.message });
+        res.status(500).json(
+            { 
+                message: "Internal server error, Failed to get vendor By id.", 
+                error: error.message 
+            }
+        );
     }
 };
 
 const updateVendor = async (req, res) => {
     try {
         const vendorId = req.vendorId;
-        // console.log(vendorId);
         const vendor = await Vendor.findById(vendorId);
         if (!vendor) {
             return res.status(404).json({ message: "Vendor not found" });
@@ -254,10 +295,20 @@ const updateVendor = async (req, res) => {
         // remove password from response
         const vendorResponse = vendor.toObject();
         delete vendorResponse.password;
-        res.status(200).json({ message: "Vendor updated successfully", vendor:vendorResponse });
+        res.status(200).json(
+            { 
+                message: "Vendor updated successfully", 
+                vendor:vendorResponse 
+            }
+        );
     } catch (error) {
-        // console.error(error);
-        res.status(500).json({ message: "Internal server error", error: error.message });
+        console.error(error);
+        res.status(500).json(
+            { 
+                message: "Internal server error, Failed to update Vendor!", 
+                error: error.message 
+            }
+        );
     }
 };
 
