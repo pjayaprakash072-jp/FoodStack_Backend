@@ -32,7 +32,8 @@
     "nodemailer": "^9.0.5",
     "razorpay": "^2.9.8",
     "redis": "^6.2.1",
-    "resend": "^6.25.0"
+    "resend": "^6.25.0",
+    "socket.io": "^4.8.3"
   },
   "devDependencies": {
     "jest": "^30.5.1",

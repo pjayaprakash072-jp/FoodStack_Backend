@@ -14,7 +14,8 @@ const createOrder = async(req,res)=>{
                 message:"Cart is empty!"
             }
         )
-        const outlet = await Outlet.findById(req.body.outlet);
+        const outletId = req.body.outletId
+        const outlet = await Outlet.findById(outletId);
         if(!outlet){
             return res.status(400).json(
                 {
@@ -25,7 +26,7 @@ const createOrder = async(req,res)=>{
         const itemIds = cartItems.map((x)=>x._id);
         const validOutlet = await Outlet.exists(
             {
-                _id:req.body.outlet,
+                _id:outletId,
                 menuItems:{$all:itemIds}
             }
         )
@@ -86,7 +87,7 @@ const createOrder = async(req,res)=>{
         const order = new Order(
             {
                 user:req.userId,
-                outlet:req.body.outlet,
+                outlet:outletId,
                 items,
                 deliveryAddress,
                 subTotal,
@@ -108,6 +109,19 @@ const createOrder = async(req,res)=>{
         user.orders.push(order._id);
         await user.save();
         await order.save();
+        const io = req.app.get("io");
+        if(io){
+            io.to(`outlet${outletId}`).emit(
+                "new-order",
+                {
+                    orderId:order._id,
+                    outletId:outletId,
+                    totalAmount:ouder.totalAmount,
+                    orderStatus:order.orderStatus,
+                    createdAt:order.createdAt
+                }
+            )
+        }
         res.status(201).json(
             {
                 message:"Order placed successfully!",
