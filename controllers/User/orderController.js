@@ -4,6 +4,7 @@ const MenuItem = require('../../models/MenuItem')
 const Address = require('../../models/User/Address')
 const Order = require('../../models/User/Order')
 const User = require('../../models/User/User')
+const Outlet = require('../../models/Outlet')
 const createOrder = async(req,res)=>{
 
     try {
@@ -13,6 +14,28 @@ const createOrder = async(req,res)=>{
                 message:"Cart is empty!"
             }
         )
+        const outlet = await Outlet.findById(req.body.outlet);
+        if(!outlet){
+            return res.status(400).json(
+                {
+                    message:"Outlet not foudn to palce order!"
+                }
+            )
+        }
+        const itemIds = cartItems.map((x)=>x._id);
+        const validOutlet = await Outlet.exists(
+            {
+                _id:req.body.outlet,
+                menuItems:{$all:itemIds}
+            }
+        )
+        if(!validOutlet){
+            return res.status(400).json(
+                {
+                    message:"One or more items do not belong to this outler."
+                }
+            )
+        }
         const items = [];
         for(const x of cartItems){
             const id = x._id;
