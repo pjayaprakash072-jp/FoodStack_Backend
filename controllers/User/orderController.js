@@ -5,6 +5,7 @@ const Address = require('../../models/User/Address')
 const Order = require('../../models/User/Order')
 const User = require('../../models/User/User')
 const Outlet = require('../../models/Outlet')
+const Vendor = require('../../models/Vendor')
 const createOrder = async(req,res)=>{
 
     try {
@@ -14,7 +15,8 @@ const createOrder = async(req,res)=>{
                 message:"Cart is empty!"
             }
         )
-        const outletId = req.body.outletId
+        const outletId = req.body.outlet
+        console.log("outletId", outletId)
         const outlet = await Outlet.findById(outletId);
         if(!outlet){
             return res.status(400).json(
@@ -34,6 +36,14 @@ const createOrder = async(req,res)=>{
             return res.status(400).json(
                 {
                     message:"One or more items do not belong to this outler."
+                }
+            )
+        }
+        const vendor = await Vendor.findById(outlet.vendor);
+        if(!vendor){
+            return res.status(400).json(
+                {
+                    message:"Vendor not found to place Order."
                 }
             )
         }
@@ -107,8 +117,12 @@ const createOrder = async(req,res)=>{
             )
         }
         user.orders.push(order._id);
+        outlet.orders.push(order._id);
+        vendor.orders.push(order._id);
         await user.save();
         await order.save();
+        await outlet.save();
+        await vendor.save();
         const io = req.app.get("io");
         if(io){
             io.to(`outlet${outletId}`).emit(
@@ -116,7 +130,7 @@ const createOrder = async(req,res)=>{
                 {
                     orderId:order._id,
                     outletId:outletId,
-                    totalAmount:ouder.totalAmount,
+                    totalAmount:order.totalAmount,
                     orderStatus:order.orderStatus,
                     createdAt:order.createdAt
                 }
@@ -139,7 +153,7 @@ const createOrder = async(req,res)=>{
     }
 }
 
-const getAllOrders = async(req,res)=>{
+const getAllOrdersByUser = async(req,res)=>{
     try {
         const orders = await Order.find(
             {
@@ -209,6 +223,6 @@ const getOneOrder = async(req,res)=>{
 
 module.exports ={
     createOrder,
-    getAllOrders,
+    getAllOrdersByUser,
     getOneOrder
 }

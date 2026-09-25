@@ -2,6 +2,8 @@ const MenuItem = require('../../models/MenuItem')
 const Address = require('../../models/User/Address')
 const Order = require('../../models/User/Order')
 const User = require('../../models/User/User')
+const Outlet =require('../../models/Outlet')
+const Vendor = require('../../models/Vendor')
 const createRazorpayOrder = require('../../utils/razorpay/createRazorpayOrder')
 const verifyRazorpayPayment = require('../../utils/razorpay/verifyRazorpayPayment')
 const createPayment = async(req,res)=>{
@@ -52,7 +54,7 @@ const createPayment = async(req,res)=>{
 const verifyPayment = async(req,res)=>{
     try {
         const {
-            outlet,
+            outlet:outletId,
             items:cartItems,
             addressId,
             razorpay_order_id,
@@ -66,10 +68,10 @@ const verifyPayment = async(req,res)=>{
                 }
             )
         }
-        if(!outlet){
+        if(!outletId){
             return res.status(400).json(
                 {
-                    message:"Outlet is need to place order"
+                    message:"outletId is need to place order"
                 }
             )
         }
@@ -135,7 +137,7 @@ const verifyPayment = async(req,res)=>{
         const order = new Order(
             {
                 user:req.userId,
-                outlet,
+                outlet:outletId,
                 items,
                 deliveryAddress,
                 subTotal,
@@ -156,9 +158,15 @@ const verifyPayment = async(req,res)=>{
                 }
             )
         }
+        const outlet = await Outlet.findById(outletId);
+        const vendor = await Vendor.findById(outlet.vendor)
+        outlet.orders.push(order._id);
         user.orders.push(order._id);
+        vendor.orders.push(order._id);
         await user.save();
         await order.save();
+        await outlet.save();
+        await vendor.save();
         res.status(200).json(
             {
                 message:"Order placed successfully!",
