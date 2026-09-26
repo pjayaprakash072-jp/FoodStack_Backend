@@ -17,6 +17,12 @@ const outletSchema = new mongoose.Schema(
             type:String,
             required:true
         },
+        latitude:String,
+        longitude:String,
+        pincode:{
+            type:String,
+            required:true
+        },
         address:{
             type:String,
             required:true
@@ -52,8 +58,8 @@ const outletSchema = new mongoose.Schema(
         },
         status:{
             type:String,
-            enum:["active","inactive"],
-            default:"active"
+            enum:["Active","Inactive"],
+            default:"Active"
         },
         image: {
             url: {
@@ -87,7 +93,11 @@ const outletSchema = new mongoose.Schema(
                 type:mongoose.Schema.Types.ObjectId,
                 ref:"Order"
             }
-        ]
+        ],
+        manager:{
+            type:mongoose.Schema.Types.ObjectId,
+            ref:"Manager"
+        }
     },
     {
         timestamps:true

@@ -187,6 +187,27 @@ const getAllOrdersByUser = async(req,res)=>{
         )
     }
 }
+const getAllOrderByVendor = async (req,res)=>{
+    try {
+        const vendorId = req.vendorId;
+        const orders = await Vendor.findById(vendorId).populate("orders");
+        if(!orders){
+            return res.status(400).json(
+                {
+                    message:" Orders not found."
+                }
+            )
+        }
+        res.status(200).json(
+            {
+                message:"orders retrieved successfully!",
+                orders:orders.orders
+            }
+        )
+    } catch (error) {
+        console.log(error)
+    }
+}
 
 const getOneOrder = async(req,res)=>{
     try {
@@ -224,5 +245,6 @@ const getOneOrder = async(req,res)=>{
 module.exports ={
     createOrder,
     getAllOrdersByUser,
-    getOneOrder
+    getOneOrder,
+    getAllOrderByVendor
 }

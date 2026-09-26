@@ -78,6 +78,12 @@ const vendorSchema = new mongoose.Schema(
                 type:mongoose.Schema.Types.ObjectId,
                 ref:"Order"
             }
+        ],
+        managers:[
+            {
+                type:mongoose.Schema.Types.ObjectId,
+                ref:"Manager"
+            }
         ]
     },
     {

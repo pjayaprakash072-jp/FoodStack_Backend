@@ -3,24 +3,40 @@ const Vendor = require('../models/Vendor');
 const MenuCategory = require('../models/MenuCategory');
 const MenuItem = require('../models/MenuItem');
 const cloudinary = require('../config/cloudinary');
+const Manager = require('../models/Manager');
+const bcrypt = require('bcryptjs')
 const {getCache , setCache, deleteCache} = require('../utils/cache')
 
 const createOutlet = async (req, res) => {
     try {
+        console.log(req.body)
         const{
-            name,
+            outletName,
             description,
-            phone,
-            address,
-            city,
-            area,
             cuisine,
             foodType,
             openingTime,
-            closingTime
+            closingTime,
+            latitude,
+            longitude,
+            pincode,
+            address,
+            city,
+            area,
+            name,
+            emial,
+            password,
+            phone,
         }
         = req.body;
-
+        const existsManager = await Manager.findOne({phone});
+        if(existsManager){
+            return res.status(400).json(
+                {
+                    message:"Manager with this phone number is already allocated, please choose different phone number!"
+                }
+            )
+        }
         const vendor = await Vendor.findById(req.vendorId);
         if (!vendor) {
             return res.status(404).json({ message: "Vendor not found" });
@@ -35,22 +51,39 @@ const createOutlet = async (req, res) => {
             public_id:""
         }
         const newOutlet = new Outlet({
-            name,
+            name:outletName,
             description,
             image,
             phone,  
-            address,
-            city,
-            area,
             cuisine,
             foodType,
             openingTime,
             closingTime,
+            latitude,
+            longitude,
+            pincode,
+            address,
+            city,
+            area,
             vendor: vendor._id
         });
+        const hashedPassword = await  bcrypt.hash(password,10);
+        const manager = new Manager(
+            {
+                name,
+                emial,
+                phone,
+                password:hashedPassword,
+                vendor:vendor._id,
+                outlet:newOutlet._id
+            }
+        )
         vendor.outlets.push(newOutlet._id);
+        vendor.managers.push(manager._id);
+        newOutlet.manager = manager._id;
         await vendor.save();
         await newOutlet.save();
+        await manager.save();
         await deleteCache("outlets:all",
                 `outlets:vendor:${newOutlet.vendor}`
             );
@@ -258,6 +291,9 @@ const deleteOutlet = async (req, res) => {
                 }
             }
         );
+        const manager = await Manager.findOne({outlet:outletId})
+        manager.outlet= null;
+        await manager.save()
 
         // Delete outlet
         await Outlet.findByIdAndDelete(outletId);
