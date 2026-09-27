@@ -71,7 +71,8 @@ const createUser = async(req,res)=>{
         console.log("Error",err);
         res.status(500).json(
             {
-                message:"Internal server Error" , error:err.message
+                message:"Internal server Error, Failed to create User/Customer!" , 
+                error:err.message
             }
         )
     }
@@ -141,7 +142,8 @@ const loginUser = async(req,res)=>{
         console.log("Error in User LoginP",error);
         res.status(500).json(
             {
-                message:"Internal server Error",error:error.message
+                message:"Internal server Error, Failed to Loding User!",
+                error:error.message
             }
         )
     }
@@ -230,7 +232,7 @@ const verifyUserEmail = async(req,res)=>{
         console.log("Email Verification Error",error);
         res.status(500).json(
             {
-                message:"Internal server Error",
+                message:"Internal server error, Failed to verify User Email!",
                 error:error.message
             }
         )

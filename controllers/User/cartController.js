@@ -15,7 +15,7 @@ const getCartItems = async (req,res)=>{
         console.log("Error",error)
         res.status(500).json(
             {
-                message:"Internal server Error",
+                message:"Internal server Error, Failed to get CartItems!",
                 error:error.message
             }
         )
@@ -59,7 +59,7 @@ const addCartItem = async (req,res)=>{
         console.log("Error",error)
         res.status(500).json(
             {
-                message:"Internal server Error",
+                message:"Internal server Error, Failed to add item to cart!",
                 error:error.message
             }
         )
@@ -89,7 +89,7 @@ const removeItem = async(req,res)=>{
         console.log("Error",error);
         res.status(500).json(
             {
-                message:"Internal server Error, failed to remove item from cart",
+                message:"Internal server Error, Failed to remove item from cart",
                 error:error.message
             }
         )
@@ -129,7 +129,7 @@ const updateCart = async(req,res)=>{
         console.log("Error",error)
         res.status(500).json(
             {
-                message:"Internal server error, Failed to update item quantity",
+                message:"Internal server error, Failed to update item quantity!",
                 error:error.message
             }
         )
@@ -157,7 +157,7 @@ const clearCart = async(req,res)=>{
         console.log("Error",error);
         res.status(500).json(
             {
-                message:"Internal server error, Failed to clear Cart",
+                message:"Internal server error, Failed to clear Cart!",
                 error:error.message
             }
         )
@@ -208,7 +208,7 @@ const mergeCart = async(req,res)=>{
         console.log("Error",error);
         res.status(500).json(
             {
-                message:"Internal server Error, Failed to merge the cart items",
+                message:"Internal server Error, Failed to merge the cart items!",
                 error:error.message
             }
         )

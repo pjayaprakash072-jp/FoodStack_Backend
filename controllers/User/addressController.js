@@ -61,7 +61,7 @@ const createAddress = async (req,res)=>{
         console.log("Error", error);
         res.status(500).json(
             {
-                message:"Internal server Erjror, Failed to Create Address.",
+                message:"Internal server Erjror, Failed to Create Address!",
                 error:error.message
             }
         )
@@ -90,7 +90,7 @@ const getAddresses = async (req,res)=>{
         console.log("Error",error);
         res.status(500).json(
             {
-                message:"Internal server Errror, Failed to get Addresses.",
+                message:"Internal server Errror, Failed to get all Addresses!",
                 error: error.message    
             }
         )
@@ -123,7 +123,7 @@ const getOneAddress = async (req,res)=>{
         console.log("Error", error)
         res.status(500).josn(
             {
-                message:"Internal server Error, Failed to get an address.",
+                message:"Internal server Error, Failed to get an address!",
                 error:error.meassage
             }
         )
@@ -176,7 +176,7 @@ const updateAddress = async(req,res)=>{
         console.log("Error",error);
         res.status(500).json(
             {
-                messae:"Internal server error,Failed to Update Address",
+                messae:"Internal server error,Failed to Update Address!",
                 error:error.messae
             }
         )
@@ -207,7 +207,7 @@ const delteAddress = async (req,res)=>{
         console.log("Error",error);
         res.status(500).josn(
             {
-                message:"Internal server error, Failed Delete Address",
+                message:"Internal server error, Failed Delete Address!",
                 error:error.messae
             }
         )

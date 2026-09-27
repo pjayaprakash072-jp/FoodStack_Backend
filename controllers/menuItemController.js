@@ -81,7 +81,7 @@ const createMenuItem = async (req, res) => {
         console.error(err);
         res.status(500).json(
             { 
-                message: "Internal server error" ,
+                message: "Internal server error, Failed to Create Item!" ,
                 error:err.message 
             }
         );
@@ -116,7 +116,7 @@ const getAllMenuItems = async (req, res) => {
         console.error(err);
         res.status(500).json(
             {
-                message: "Internal server error",
+                message: "Internal server error, Failed to get All menuItems!",
                 error:err.message 
             }
         );
@@ -159,7 +159,7 @@ const getMenuItemById = async (req, res) => {
         console.error(err);
         res.status(500).json(
             { 
-                message: "Internal server error" ,
+                message: "Internal server error, Failed to get item by id!" ,
                 error:err.message
             })
             ;
@@ -202,7 +202,7 @@ const getMenuitemsByOutlet = async (req, res) => {
         console.error(err);
         res.status(500).json(
             { 
-                message: "Internal server error" ,
+                message: "Internal server error, Failed to get Items by OutletId!" ,
                 error:err.message
             }
         );
@@ -245,7 +245,7 @@ const getMenuItemsByCategory = async (req, res) => {
         console.error(err);
         res.status(500).json(
             { 
-                message: "Internal server error",
+                message: "Internal server error, Failed to get Items by categoryId!",
                 error:err.message 
             }
         );
@@ -302,7 +302,7 @@ const updateMenuItem = async (req, res) => {
         console.error(err);
         res.status(500).json(
             { 
-                message: "Internal server error",
+                message: "Internal server error, Failed to Update Item!",
                 error:err.message 
             }
         );
@@ -369,7 +369,8 @@ const deleteMenuItem = async (req, res) => {
         console.error(err);
         res.status(500).json(
             { 
-                message: "Internal server error",error:err.message 
+                message: "Internal server error, Failed to delete Item!",
+                error:err.message 
             }
         );
     }
@@ -415,7 +416,7 @@ const getAllMenuItemsByVendor = async (req, res) => {
         console.error(err);
         res.status(500).json(
             { 
-                message: "Internal server error",
+                message: "Internal server error, Failed to get Items by vendor!",
                 error:err.message 
             }
         );

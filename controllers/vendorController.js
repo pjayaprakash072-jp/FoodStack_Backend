@@ -235,7 +235,7 @@ const getAllVendors = async (req, res) => {
         console.error(error);
         res.status(500).json(
             { 
-                message: "Internal server error,Failed to retrievt all vendors!", 
+                message: "Internal server error, Failed to retrieve all vendors!", 
                 error: error.message 
             }
         );
@@ -345,10 +345,20 @@ const deleteVendor = async (req, res) => {
             await cloudinary.uploader.destroy(vendor.profileImg.public_id);
         }
         await Vendor.findByIdAndDelete(vendorId);
-        res.status(200).json({ message: "Vendor deleted successfully", vendor });
+        res.status(200).json(
+            { 
+                message: "Vendor deleted successfully", 
+                vendor 
+            }
+        );
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Internal server error", error: error.message });
+        res.status(500).json(
+            { 
+                message: "Internal server error, Failed to Delete the Vendor!", 
+                error: error.message 
+            }
+        );
     }
 };
 
@@ -359,7 +369,7 @@ const forgotPassword = async(req,res)=>{
         if(!vendor){
             return res.status(400).json(
                 {
-                    message:"Vendor not found,Please create Account"
+                    message:"Vendor not found, Please create Account!"
                 }
             )
         }
@@ -390,7 +400,8 @@ const forgotPassword = async(req,res)=>{
         console.error(error)
         return res.status(500).json(
             {
-                message:"Internal server error"
+                message:"Internal server error, Failed to sent the Forgot password link!",
+                error:error.message
             }
         )
     }
@@ -452,7 +463,8 @@ const resetPassword = async (req,res)=>{
         console.error(error);
         return res.status(500).json(
             {
-                message:"Internal server Errro."
+                message:"Internal server error, Failed to resetPassword!",
+                error:error.message
             }
         )
     }

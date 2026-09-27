@@ -59,7 +59,8 @@ const createMenuCategory = async(req,res)=>{
         console.error(error);
         res.status(500).json(
             {
-                message:"Internal server error",error:error.message
+                message:"Internal server error, Failed to Create Category!",
+                error:error.message
             }
         );
     }
@@ -104,7 +105,12 @@ const getMenuCategoriesByOutlet = async(req,res)=>{
         );
     } catch (error) {
         console.error(error);
-        res.status(500).json({message:"Internal server error",error:error.message});
+        res.status(500).json(
+            {
+                message:"Internal server error, Failed to get categories by outletId!",
+                error:error.message
+            }
+        );
     }
 }
 
@@ -141,7 +147,7 @@ const getAllMenuCategories = async(req,res)=>{
         console.error(error);
         res.status(500).json(
             {
-                message:"Internal server error",
+                message:"Internal server error, Failed to get All categories!",
                 error:error.message
             }
         );
@@ -183,7 +189,7 @@ const getMenuCategoryById = async(req,res)=>{
         console.error(error);
         res.status(500).json(
             {
-                message:"Internal server error",
+                message:"Internal server error, Failed to get category by id!",
                 error:error.message
             }
         );
@@ -240,7 +246,7 @@ const updateMenuCategory = async(req,res)=>{
         console.error(error);
         res.status(500).json(
             {
-                message:"Internal server error",
+                message:"Internal server error, Failed to Update category!",
                 error:error.message
             }
         );
@@ -330,7 +336,7 @@ const deleteMenuCategory = async(req,res)=>{
         console.error(error);
         res.status(500).json(
             {
-                message:"Internal server error",
+                message:"Internal server error, Failed to delete category!",
                 error:error.message
             }
         );
@@ -370,7 +376,7 @@ const getMenuCategoriesByVendor = async(req,res)=>{
         console.error(error);
         res.status(500).json(
             {
-                message:"Internal server error",
+                message:"Internal server error, Failed to get all categories by vendor!",
                 error:error.message
             }
         );

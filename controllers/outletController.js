@@ -87,10 +87,20 @@ const createOutlet = async (req, res) => {
         await deleteCache("outlets:all",
                 `outlets:vendor:${newOutlet.vendor}`
             );
-        res.status(201).json({ message: "Outlet created successfully", outlet: newOutlet });    
+        res.status(201).json(
+            { 
+                message: "Outlet created successfully", 
+                outlet: newOutlet 
+            }
+        );    
     }catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Internal server error", error: error.message });
+        res.status(500).json(
+            { 
+                message: "Internal server error, Failed to Create Outlet!", 
+                error: error.message 
+            }
+        );
     }
 }
 
@@ -121,7 +131,12 @@ const getAllOutlets = async (req, res) => {
         );
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Internal server error", error: error.message });
+        res.status(500).json(
+            { 
+                message: "Internal server error, Failed to GetAllOutelts", 
+                error: error.message 
+            }
+        );
     }   
 };
 
@@ -156,7 +171,12 @@ const getOutletById = async (req, res) => {
         );
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Internal server error", error: error.message });
+        res.status(500).json(
+            { 
+                message: "Internal server error, Failed to get outlet by id!", 
+                error: error.message 
+            }
+        );
     }
 };
 
@@ -186,7 +206,12 @@ const getOutletsByVendorId = async (req, res) => {
         )
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Internal server error", error: error.message });
+        res.status(500).json(
+            { 
+                message: "Internal server error, Failed to get outlets by vendor!", 
+                error: error.message 
+            }
+        );
     }
 };
 
@@ -216,11 +241,21 @@ const updateOutlet = async (req, res) => {
         );
         Object.assign(outlet,req.body);
         await outlet.save();
-        res.status(200).json({ message: "Outlet updated successfully", outlet });
+        res.status(200).json(
+            { 
+                message: "Outlet updated successfully", 
+                outlet 
+            }
+        );
 
     } catch (error) {
         console.error(error);
-        res.status(500).json({ message: "Internal server error", error: error.message });
+        res.status(500).json(
+            { 
+                message: "Internal server error, Failed to update Outlet!", 
+                error: error.message 
+            }
+        );
     }
 }
 
@@ -338,10 +373,12 @@ const deleteOutlet = async (req, res) => {
     } catch (error) {
         console.error(error);
 
-        res.status(500).json({
-            message: "Internal server error",
-            error: error.message
-        });
+        res.status(500).json(
+            {
+                message: "Internal server error, Failed to delete Oullet.",
+                error: error.message
+            }
+        );
     }
 };
 module.exports = {

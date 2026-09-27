@@ -242,9 +242,39 @@ const getOneOrder = async(req,res)=>{
     }
 }
 
+const getOrdersByOutlet = async (req,res)=>{
+    try {
+        const outletId = req.outletId;
+        const outlet = await Outlet.findById(outletId).populate("orders");
+        if(!outlet.length){
+            return res.status(400).json(
+                {
+                    message:"Orders not found."
+                }
+            )
+        }
+        res.status(200).json(
+            {
+                messsage:"Orders retrieved succcessfully for the outlet.",
+                orders:outlet.orders
+            }
+        )
+        
+    } catch (error) {
+        console.log("Error, while getting the orders by outlet",error);
+        res.status(500).json(
+            {
+                message:"Internal server error, Failed to getOrdersByOutlet",
+                error:error.message
+            }
+        )
+    }
+}
+
 module.exports ={
     createOrder,
     getAllOrdersByUser,
     getOneOrder,
-    getAllOrderByVendor
+    getAllOrderByVendor,
+    getOrdersByOutlet
 }

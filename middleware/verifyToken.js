@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const Vendor = require('../models/Vendor');
 const User = require("../models/User/User")
+const Manager = require('../models/Manager')
 const {getCache} = require('../utils/cache')
 
 const verifyToken = async (req, res, next) => {
@@ -64,6 +65,11 @@ const verifyToken = async (req, res, next) => {
         if(decoded.role === "user"){
             req.userId = decoded.id;
             req.user = await User.findById(decoded.id)
+        }
+        if(decoded.role ==="manager"){
+            req.managerId = decoded.id;
+            req.outletId = decoded.outletId;
+            req.manager = await Manager.findById(decoded.id);
         }
         next();
     } catch (error) {

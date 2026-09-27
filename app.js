@@ -14,6 +14,7 @@ const cartRoutes = require("./routes/User/cartRoutes")
 const addressRoutes = require('./routes/User/addressRoutes')
 const orderRoutes = require('./routes/User/orderRoutes')
 const paymentRoutes = require('./routes/User/paymentRoutes')
+const managerRoutes = require('./routes/managerRoutes')
 
 
 const { redisClient } = require("./config/redis")
@@ -36,7 +37,8 @@ app.use("/user",userRoutes)
 app.use("/cart",cartRoutes)
 app.use("/address",addressRoutes);
 app.use("/order",orderRoutes);
-app.use("/payment",paymentRoutes)
+app.use("/payment",paymentRoutes);
+app.use("/manager",managerRoutes)
 
 // HOME route.
 app.get('/',(req,res)=>{
