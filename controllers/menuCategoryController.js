@@ -157,6 +157,7 @@ const getAllMenuCategories = async(req,res)=>{
 const getMenuCategoryById = async(req,res)=>{
     try{
         const menuCategoryId = req.params.id;
+        console.log(menuCategoryId)
         const cacheKey =`menuCategory:${menuCategoryId}`;
         const cachedCategory = await getCache(cacheKey);
         if(cachedCategory){
@@ -200,7 +201,9 @@ const getMenuCategoryById = async(req,res)=>{
 
 const updateMenuCategory = async(req,res)=>{
     try{    
+        console.log(req.body)
         const menuCategoryId = req.params.id;
+        console.log(menuCategoryId)
         const menuCategory = await MenuCategory.findById(menuCategoryId).populate(
             {
                 path: "outlet",

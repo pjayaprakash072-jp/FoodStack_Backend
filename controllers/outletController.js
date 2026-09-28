@@ -219,6 +219,7 @@ const getOutletsByVendorId = async (req, res) => {
 const updateOutlet = async (req, res) => {
     try {
         const outletId = req.role === "manager"? req.outletId : req.params.id;
+        const {outletName,name,...otherFields} = req.body;
         const outlet = await Outlet.findById(outletId);
         if (!outlet) {
             return res.status(404).json({ message: "Outlet not found" });
@@ -239,7 +240,8 @@ const updateOutlet = async (req, res) => {
             "outlets:all",
             `outlets:vendor:${outlet.vendor}`
         );
-        Object.assign(outlet,req.body);
+        outlet.name = outletName;
+        Object.assign(outlet,otherFields);
         await outlet.save();
         res.status(200).json(
             { 
