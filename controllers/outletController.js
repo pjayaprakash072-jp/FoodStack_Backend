@@ -218,7 +218,7 @@ const getOutletsByVendorId = async (req, res) => {
 
 const updateOutlet = async (req, res) => {
     try {
-        const outletId = req.params.id;
+        const outletId = req.role === "manager"? req.outletId : req.params.id;
         const outlet = await Outlet.findById(outletId);
         if (!outlet) {
             return res.status(404).json({ message: "Outlet not found" });

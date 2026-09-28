@@ -5,7 +5,7 @@ const cloudinary = require('../config/cloudinary');
 const {getCache,setCache,deleteCache} = require("../utils/cache")
 
 const createMenuCategory = async(req,res)=>{
-    const outletId = req.params.outletId;
+    const outletId = req.role === "manager"? req.outletId : req.params.outletId;
     try{
         const{
             name,
@@ -69,7 +69,7 @@ const createMenuCategory = async(req,res)=>{
 
 const getMenuCategoriesByOutlet = async(req,res)=>{
     try{
-        const outletId = req.params.outletId;
+        const outletId =req.role === "manager"? req.outletId : req.params.outletId;
         const cacheKey = `menuCategories:outlet:${outletId}`;
         const cachedCategories =await getCache(cacheKey);
         if(cachedCategories){

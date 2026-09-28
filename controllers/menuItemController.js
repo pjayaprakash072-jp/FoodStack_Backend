@@ -168,7 +168,7 @@ const getMenuItemById = async (req, res) => {
 
 const getMenuitemsByOutlet = async (req, res) => {
     try {
-        const outletId = req.params.outletId;
+        const outletId = req.role === "manager"? req.outletId : req.params.outletId;
         const cacheKey =`menuItems:outlet:${outletId}`;
         const cachedItems = await getCache(cacheKey);
         if(cachedItems){
