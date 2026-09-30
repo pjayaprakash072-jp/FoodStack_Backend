@@ -6,6 +6,7 @@ const {loginManager} = require('../controllers/managerController')
 const {updateOutlet} = require('../controllers/outletController')
 const {getMenuCategoriesByOutlet,getMenuCategoryById,createMenuCategory,updateMenuCategory,deleteMenuCategory} = require('../controllers/menuCategoryController')
 const {getMenuitemsByOutlet,getMenuItemsByCategory,getMenuItemById,createMenuItem,updateMenuItem,deleteMenuItem} = require('../controllers/menuItemController')
+const {getOrdersByOutlet} = require('../controllers/User/orderController')
 
 router.post('/login',loginManager);
 router.put('/outlet/update',verifyToken,authorizeRoles("manager"),updateOutlet);
@@ -20,4 +21,5 @@ router.get("/items/get/:menuItemId",verifyToken,authorizeRoles("manager"),getMen
 router.post('/items/add/:categoryId',verifyToken,authorizeRoles("manager"),upload.single('image'),createMenuItem);
 router.put("/items/update/:menuItemId",verifyToken,authorizeRoles("manager"),upload.single('image'),updateMenuItem);
 router.delete("/items/delete/:menuItemId",verifyToken,authorizeRoles("manager"),deleteMenuItem)
+router.get("/orders",verifyToken,authorizeRoles("manager"),getOrdersByOutlet)
 module.exports =router 
