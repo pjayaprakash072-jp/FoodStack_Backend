@@ -245,8 +245,10 @@ const getOneOrder = async(req,res)=>{
 const getOrdersByOutlet = async (req,res)=>{
     try {
         const outletId = req.outletId;
+        console.log(outletId)
         const outlet = await Outlet.findById(outletId).populate("orders");
-        if(!outlet.length){
+        console.log(outlet);
+        if(!outlet){
             return res.status(400).json(
                 {
                     message:"Orders not found."
