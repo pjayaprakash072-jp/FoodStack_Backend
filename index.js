@@ -2,34 +2,49 @@
 const dotenv = require("dotenv");
 dotenv.config();
 const http = require("http")
+const crypto = require('crypto')
 const {Server} = require('socket.io');
 const app = require('./app')
-const server = http.createServer(app);
 
 const connectDB = require("./config/db");
 const {connectRedis} = require('./config/redis')
-const crypto = require('crypto')
+
+const server = http.createServer(app);
+
 const INSTANCE_ID = crypto.randomUUID();
 
 const PORT = process.env.PORT || 5000;  
+const allowedOrigins = [
+    "http://localhost:5173",
+    "http://localhost:5174",
+    process.env.FRONTEND_URL
+].filter(Boolean);
 const io = new Server(server,{
     cors:{
-        origin:[
-            "http://localhost:5173",
-            "http://localhost:5174",
-            process.env.FRONTEND_URL
-        ].filter(Boolean),
+        origin:allowedOrigins,
         credentials:true
     }
 })
+// Make socket.io available in Express.
 app.set("io",io);
+
+// socker connection
 io.on("connection",(socket)=>{
+
     console.log("Socket connected:",socket.id);
+    // JOINING A ROOM.(each outlet have different rooms.)
     socket.on("join-outlet",(outletId)=>{
         if(!outletId) return ;
         const roomName = `outlet:${outletId}`;
         socket.join(roomName);
         console.log(`socket ${socket.id} joined outlet:${outletId}`)
+    })
+    //LEAVING ROOM
+    socket.on("leave-outlet",(outletId)=>{
+        if(!outletId) return ;
+        const roomName = `outlet:${outletId}`;
+        socket.leave(roomName);
+        console.log(`socket ${socket.id} left ${roomName}`)
     })
     socket.on("disconnect",()=>{
         console.log("Socket disconnected:",socket.id);

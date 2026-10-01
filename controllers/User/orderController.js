@@ -123,10 +123,11 @@ const createOrder = async(req,res)=>{
         await order.save();
         await outlet.save();
         await vendor.save();
+
         const io = req.app.get("io");
         if(io){
-            io.to(`outlet${outletId}`).emit(
-                "new-order",
+            const roomName = `outlet:${outletId}`;
+            io.to(roomName).emit("new-order",
                 {
                     orderId:order._id,
                     outletId:outletId,
@@ -135,6 +136,7 @@ const createOrder = async(req,res)=>{
                     createdAt:order.createdAt
                 }
             )
+            console.log(`New Order is emitted to ${roomName}`)
         }
         res.status(201).json(
             {
