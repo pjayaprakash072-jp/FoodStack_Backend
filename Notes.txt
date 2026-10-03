@@ -1,3 +1,9 @@
+Query urls  -> 
+                -> router.post("/create", upload.single("profileImg"), createVendor);
+                -> Frontend url is : /create?name=jaya&age=12
+                -> Accessing the controller => name = req.query.name //all value from url are String 
+                                            => age = Number(req.queruy.age)
+
 API's:
 =====
 

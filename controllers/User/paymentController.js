@@ -167,6 +167,18 @@ const verifyPayment = async(req,res)=>{
         await order.save();
         await outlet.save();
         await vendor.save();
+        const io = req.app.get("io");
+        if(io){
+            const roomName = `outlet:${outletId}`;
+            io.to(roomName).emit("new-order",{
+                orderId:order._id,
+                outletId:outletId,
+                totalAmount:order.totalAmount,
+                orderStatus:order.orderStatus,
+                createdAt:order.createdAt
+            })
+            console.log(`New Order is emitted to ${roomName}`)
+        }
         res.status(200).json(
             {
                 message:"Order placed successfully!",
