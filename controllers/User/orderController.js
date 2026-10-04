@@ -274,11 +274,54 @@ const getOrdersByOutlet = async (req,res)=>{
         )
     }
 }
+const updateOrder = async(req,res)=>{
+    try {
+        const orderId = req.params.orderId;
+        const {paymentStatus,orderStatus} = req.body;
+        if(!paymentStatus && !orderStatus) {
+            return res.status(400).json(
+                {
+                    message:"Missing orderStatus Or PaymentStatus"
+                }
+            )
+        }
+        const order = await Order.findById(orderId);
+        if(!order){
+            return res.status(400).json(
+                {
+                    message:"Order not found"
+                }
+            )
+        }
+        if(orderStatus){
+            order.orderStatus = orderStatus;
+        }
+        if(paymentStatus){
+            order.paymentStatus = paymentStatus;
+        }
+        await order.save();
+        res.status(200).json(
+            {
+                message:"Order Updated Successfully!",
+                order
+            }
+        )
+        
+    } catch (error) {
+        console.log("Error, Failed to update Order status");
+        res.status(500).json(
+            {
+                message:"Internal server error, Failed to update Order Status",
+            }
+        )
+    }
+}
 
 module.exports ={
     createOrder,
     getAllOrdersByUser,
     getOneOrder,
     getAllOrderByVendor,
-    getOrdersByOutlet
+    getOrdersByOutlet,
+    updateOrder
 }
