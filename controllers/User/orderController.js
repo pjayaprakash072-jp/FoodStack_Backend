@@ -276,6 +276,7 @@ const getOrdersByOutlet = async (req,res)=>{
 }
 const updateOrder = async(req,res)=>{
     try {
+        console.log(req.body)
         const orderId = req.params.orderId;
         const {paymentStatus,orderStatus} = req.body;
         if(!paymentStatus && !orderStatus) {
@@ -299,7 +300,17 @@ const updateOrder = async(req,res)=>{
         if(paymentStatus){
             order.paymentStatus = paymentStatus;
         }
+        const io = req.app.get("io");
         await order.save();
+        if(io){
+            const roomName = `order:${order._id}`;
+            io.to(roomName).emit("order-status-updated",{
+                orderId:String(order._id),
+                orderStatus:order.orderStatus,
+                // paymentStatus:order.paymentStatus
+            })
+            console.log(`Order status updated and emitted to ${roomName}`)
+        }
         res.status(200).json(
             {
                 message:"Order Updated Successfully!",

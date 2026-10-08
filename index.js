@@ -49,6 +49,18 @@ io.on("connection",(socket)=>{
     socket.on("disconnect",()=>{
         console.log("Socket disconnected:",socket.id);
     })
+    socket.on("join-order",(orderId)=>{
+        if(!orderId) return ;
+        const roomName = `order:${orderId}`;
+        socket.join(roomName);
+        console.log(`socket ${socket.id} joined order:${orderId}`)
+    })
+    socket.on("leave-order",(orderId)=>{
+        if(!orderId) return ;
+        const roomName =`order:${orderId}`;
+        socket.leave(roomName);
+        console.log(`socket ${socket.in} left ${roomName}`)
+    })
 })
 
 const startServer = async ()=>{
