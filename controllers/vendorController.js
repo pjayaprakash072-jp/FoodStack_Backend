@@ -388,7 +388,7 @@ const forgotPassword = async(req,res)=>{
 
         await vendor.save({validateBeforeSave:false})
 
-        const resetURL =`${process.env.FRONTEND_URL}/reset-password/${resetToken}`
+        const resetURL =`${process.env.FRONTEND_URL_VENDOR}/reset-password/${resetToken}`
 
         await sendForgotPasswordLink(vendor.email,vendor.name,resetURL);
         return res.status(200).json(

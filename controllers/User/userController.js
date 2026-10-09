@@ -55,7 +55,7 @@ const createUser = async(req,res)=>{
             }
         )
         await user.save();
-        const verificationURL = `${process.env.FRONTEND_URL}/verify-email/${verificationToken}`
+        const verificationURL = `${process.env.FRONTEND_URL_CLIENT}/verify-email/${verificationToken}`
         console.log(verificationURL);
         try{
             await sendVerificationEmail(email,name,verificationURL);
@@ -106,7 +106,7 @@ const loginUser = async(req,res)=>{
             user.emailVerificationToken = verificationToken;
             user.emailVerificationExpires = verificationTokenExpires;
             user.save();
-            const verificationURL = `${process.env.FRONTEND_URL}/verify-email/${verificationToken}`
+            const verificationURL = `${process.env.FRONTEND_URL_CLIENT}/verify-email/${verificationToken}`
             try{
                 await sendVerificationEmail(email,user.name,verificationURL)
             }catch(err){
