@@ -5,7 +5,7 @@ const { sendWelcomeEmail , sendVerificationEmail} = require('../../utils/email')
 const {setCache} = require('../../utils/cache')
 const cloudinary = require('../../config/cloudinary')
 const jwt = require("jsonwebtoken")
-
+const sendWhatsAppMessage = require('../../utils/whatsapp')
 const createUser = async(req,res)=>{
     try{
         const {
@@ -55,12 +55,21 @@ const createUser = async(req,res)=>{
             }
         )
         await user.save();
-        const verificationURL = `${process.env.BACKEND_URL}/user/verify-email/${verificationToken}`
+        const verificationURL = `${process.env.FRONTEND_URL}/verify-email/${verificationToken}`
         console.log(verificationURL);
         try{
             await sendVerificationEmail(email,name,verificationURL);
         }catch(err){
             console.log("Email send failed",err)
+        }
+        //Send Whatsapp message
+        try {
+            if(phone){
+                await sendWhatsAppMessage(phone,name);
+                console.log("Whatsapp welcome message sent!")
+            }
+        } catch (error) {
+            console.log("WhatsApp message failed",error.message)
         }
     res.status(201).json(
         {
@@ -97,7 +106,7 @@ const loginUser = async(req,res)=>{
             user.emailVerificationToken = verificationToken;
             user.emailVerificationExpires = verificationTokenExpires;
             user.save();
-            const verificationURL = `${process.env.BACKEND_URL}/user/verify-email/${verificationToken}`
+            const verificationURL = `${process.env.FRONTEND_URL}/verify-email/${verificationToken}`
             try{
                 await sendVerificationEmail(email,user.name,verificationURL)
             }catch(err){
@@ -206,7 +215,7 @@ const verifyUserEmail = async(req,res)=>{
         if(!user){
             return res.status(400).json(
                 {
-                    message:"Invalid verification link."
+                    message:"Invalid verification link or token already used."
                 }
             )
         }

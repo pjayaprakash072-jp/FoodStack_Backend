@@ -9,12 +9,12 @@ const sendWhatsAppMessage = async(phone,name)=>{
         body:JSON.stringify(
             {
                 messaging_product:"whatsapp",
-                to:phone,
+                to:`91${phone}`,
                 type:"template",
                 template:{
-                    name:"Welcome_message",
+                    name:"welcome_message",
                     language:{
-                        code:"en_US"
+                        code:"en"
                     },
                     components:[
                         {
@@ -22,6 +22,7 @@ const sendWhatsAppMessage = async(phone,name)=>{
                             parameters:[
                                 {
                                     type:"text",
+                                    parameter_name:"user_name",
                                     text:name
                                 }
                             ]
@@ -32,9 +33,14 @@ const sendWhatsAppMessage = async(phone,name)=>{
         )
     })
     const data = await response.json();
+    console.log(data);
     if(!response.ok){
+        // throw new Error(
+        //     data.error?.message || "WhatsApp message failed"
+        // )
+        console.log("Whatsapp API error:",data.error);
         throw new Error(
-            data.error?.message || "WhatsApp message failed"
+            JSON.stringify(data.error)
         )
     }
     return data;
