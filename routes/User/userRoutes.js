@@ -1,11 +1,12 @@
 const express = require('express')
 const router = express.Router();
 const upload = require('../../middleware/upload')
+const verifyCaptcha = require("../../middleware/verifyCaptcha")
 const verifyToken = require('../../middleware/verifyToken')
 const authorizeRoles = require('../../middleware/authorizeRoles')
 const {createUser,updateUser ,verifyUserEmail, loginUser} = require("../../controllers/User/userController")
 router.post("/create",upload.single("profileImg"),createUser)
 router.get("/verify-email/:verificationToken", verifyUserEmail)
 router.put("/update",upload.single("profileImg"),verifyToken,authorizeRoles("user"),updateUser)
-router.post("/login",loginUser)
+router.post("/login",verifyCaptcha,loginUser)
 module.exports= router;

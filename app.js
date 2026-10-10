@@ -27,7 +27,7 @@ const PORT = process.env.PORT || 5000;
 
 app.use(cors());
 app.use(express.json());
-
+app.use(express.urlencoded({extended:true}))// name=Jayaprakash&email=jay@gmail.com suppose the req.body is like this , then it will make req.body as obj.
 
 app.use("/vendor", vendorRoutes);
 app.use("/outlet", outletRoutes);
