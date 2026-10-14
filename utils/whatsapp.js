@@ -12,7 +12,7 @@ const sendWhatsAppMessage = async(phone,name)=>{
                 to:`91${phone}`,
                 type:"template",
                 template:{
-                    name:"welcome_message",
+                    name:"message_welcome",
                     language:{
                         code:"en"
                     },

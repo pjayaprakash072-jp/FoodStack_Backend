@@ -8,5 +8,6 @@ const {createUser,updateUser ,verifyUserEmail, loginUser} = require("../../contr
 router.post("/create",upload.single("profileImg"),createUser)
 router.get("/verify-email/:verificationToken", verifyUserEmail)
 router.put("/update",upload.single("profileImg"),verifyToken,authorizeRoles("user"),updateUser)
-router.post("/login",verifyCaptcha,loginUser)
+router.post("/login",loginUser)
+// router.post("/login",verifyCaptcha,loginUser)
 module.exports= router;
