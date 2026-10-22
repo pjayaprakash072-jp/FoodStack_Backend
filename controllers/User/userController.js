@@ -8,16 +8,16 @@ const jwt = require("jsonwebtoken")
 const sendWhatsAppMessage = require('../../utils/whatsapp')
 const createUser = async(req,res)=>{
     try{
+        const authId = req.params.authId;
         const {
             name,
             email,
-            password,
             phone
         } = req.body;
-        if(!name || !email|| !password){
+        if(!name || !email ){
             return res.status(400).json(
                 {
-                    message:"Name, email and password are required!"
+                    message:"Name and email required!"
                 }
             )
         }
@@ -29,7 +29,7 @@ const createUser = async(req,res)=>{
                 }
             )
         }
-        const hashedPassword = await bcrypt.hash(password,10);
+        // const hashedPassword = await bcrypt.hash(password,10);
         const profileImg = req.file?
         {
             url:req.file.path,
@@ -38,39 +38,40 @@ const createUser = async(req,res)=>{
             url:"",
             public_id:""
         }
-        const verificationToken = crypto.randomBytes(32).toString("hex");
-        const verificationTokenExpires = new Date(
-            Date.now()+ 10*60*1000
-        )
+        // const verificationToken = crypto.randomBytes(32).toString("hex");
+        // const verificationTokenExpires = new Date(
+        //     Date.now()+ 10*60*1000
+        // )
         const user = new User(
             {
+                authId,
                 name,
                 email:email.toLowerCase(),
-                password:hashedPassword,
+                // password:hashedPassword,
                 phone,
                 profileImg,
                 authProvider:"local",
-                emailVerificationToken:verificationToken,
-                emailVerificationExpires:verificationTokenExpires
+                // emailVerificationToken:verificationToken,
+                // emailVerificationExpires:verificationTokenExpires
             }
         )
         await user.save();
-        const verificationURL = `${process.env.FRONTEND_URL_CLIENT}/verify-email/${verificationToken}`
-        console.log(verificationURL);
-        try{
-            await sendVerificationEmail(email,name,verificationURL);
-        }catch(err){
-            console.log("Email send failed",err)
-        }
-        //Send Whatsapp message
-        try {
-            if(phone){
-                await sendWhatsAppMessage(phone,name);
-                console.log("Whatsapp welcome message sent!")
-            }
-        } catch (error) {
-            console.log("WhatsApp message failed",error.message)
-        }
+        // const verificationURL = `${process.env.FRONTEND_URL_CLIENT}/verify-email/${verificationToken}`
+        // console.log(verificationURL);
+        // try{
+        //     await sendVerificationEmail(email,name,verificationURL);
+        // }catch(err){
+        //     console.log("Email send failed",err)
+        // }
+        // //Send Whatsapp message
+        // try {
+        //     if(phone){
+        //         await sendWhatsAppMessage(phone,name);
+        //         console.log("Whatsapp welcome message sent!")
+        //     }
+        // } catch (error) {
+        //     console.log("WhatsApp message failed",error.message)
+        // }
     res.status(201).json(
         {
             message:"user Created Successfull! Please Verify email",user
@@ -203,45 +204,28 @@ const updateUser = async(req,res)=>{
         )
     }
 }
-
-const verifyUserEmail = async(req,res)=>{
+const getOneUser = async(req,res)=>{
     try {
-        const {verificationToken} = req.params;
-        const user = await User.findOne(
-            {
-                emailVerificationToken:verificationToken
-            }
-        )
+        const authId = req.params.authId;
+        const user = await User.findOne({authId});
         if(!user){
             return res.status(400).json(
                 {
-                    message:"Invalid verification link or token already used."
+                    message:"user not found"
                 }
             )
         }
-        if(!user.emailVerificationExpires || user.emailVerificationExpires < new Date()){
-            return res.status(400).json(
-                {
-                    message:"Verification link has expired."
-                }
-            )
-        }
-        user.isVerified = true;
-        user.emailVerificationToken = null;
-        user.emailVerificationExpires= null;
-
-        await user.save();
         res.status(200).json(
             {
-                message:"Email verified successfully!"
+                message:"user retrieved successfully",
+                user
             }
         )
-
     } catch (error) {
-        console.log("Email Verification Error",error);
-        res.status(500).json(
+        console.log("Failed to retrieve the user",error);
+        res.status(400).json(
             {
-                message:"Internal server error, Failed to verify User Email!",
+                message:"Internal server Error, Failed to retrieve user",
                 error:error.message
             }
         )
@@ -251,5 +235,5 @@ module.exports = {
     createUser,
     loginUser,
     updateUser,
-    verifyUserEmail
+    getOneUser
 }

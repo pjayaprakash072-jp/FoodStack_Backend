@@ -15,7 +15,8 @@ const addressRoutes = require('./routes/User/addressRoutes')
 const orderRoutes = require('./routes/User/orderRoutes')
 const paymentRoutes = require('./routes/User/paymentRoutes')
 const managerRoutes = require('./routes/managerRoutes')
-
+const vendorAuthRoutes = require('./routes/vendroAuthRoutes')
+const userAuthRoutes = require('./routes/User/userAuthRoutes')
 
 const { redisClient } = require("./config/redis")
 
@@ -30,10 +31,12 @@ app.use(express.json());
 app.use(express.urlencoded({extended:true}))// name=Jayaprakash&email=jay@gmail.com suppose the req.body is like this , then it will make req.body as obj.
 
 app.use("/vendor", vendorRoutes);
+app.use("/vendorAuth",vendorAuthRoutes)
 app.use("/outlet", outletRoutes);
 app.use("/menu-category", menuCategoryRoutes);
 app.use("/menu-item", menuItemRoutes);
 app.use("/user",userRoutes)
+app.use("/userAuth",userAuthRoutes)
 app.use("/cart",cartRoutes)
 app.use("/address",addressRoutes);
 app.use("/order",orderRoutes);

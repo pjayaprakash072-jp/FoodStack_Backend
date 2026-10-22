@@ -59,12 +59,16 @@ const verifyToken = async (req, res, next) => {
         }
         req.role = decoded.role;
         if(decoded.role ==="vendor"){
-            req.vendorId = decoded.id;
-            req.vendor = await Vendor.findById(decoded.id)
+            const authId = decoded.id;
+            const vendor = await Vendor.findOne({authId})
+            req.vendorId = vendor._id;
+            req.vendor = vendor;
         }
         if(decoded.role === "user"){
-            req.userId = decoded.id;
-            req.user = await User.findById(decoded.id)
+            const authId = decoded.id;
+            const user = await User.findOne({authId});
+            req.userId = user._id;
+            req.user = user;
         }
         if(decoded.role ==="manager"){
             req.managerId = decoded.id;

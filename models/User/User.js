@@ -1,6 +1,12 @@
 const mongoose = require('mongoose')
 const userSchema = new mongoose.Schema(
     {
+        authId:{
+            type:mongoose.Schema.Types.ObjectId,
+            ref:"UserAuth",
+            required:true,
+            unique:true
+        },
         role:{
             type:String,
             enum:["user"],
@@ -25,12 +31,6 @@ const userSchema = new mongoose.Schema(
                 return this.authProvider === "local"
             }
         },
-        password:{
-            type:String,
-            required:function(){
-                return this.authProvider === "local"
-            }
-        },
         profileImg:{
             url:{
                 type:String,
@@ -45,23 +45,6 @@ const userSchema = new mongoose.Schema(
             type:String,
             enum:["local","google"],
             default:"local"
-        },
-        googleId:{
-            type:String,
-            unique:true,
-            sparse:true
-        },
-        isVerified:{
-            type:Boolean,
-            default:false
-        },
-        emailVerificationToken:{
-            type:String,
-            default:null
-        },
-        emailVerificationExpires:{
-            type:Date,
-            default:null
         },
         cart:[
             {

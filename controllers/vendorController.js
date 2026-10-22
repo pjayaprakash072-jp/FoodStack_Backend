@@ -120,10 +120,10 @@ const googleLogin = async(req,res)=>{
 }
 const createVendor = async (req, res) => {
     try {
+        const authId = req.params.authId;
         const{
             name,
             email,
-            password,
             phone,
             businessName
         } = req.body;
@@ -131,7 +131,6 @@ const createVendor = async (req, res) => {
         if (existingVendor) {
             return res.status(400).json({ message: "Vendor with this email already exists" });
         }
-        const hashedPassword = await bcrypt.hash(password, 10);
         const profileImg = req.file
         ? {
             url:req.file.path,
@@ -141,9 +140,9 @@ const createVendor = async (req, res) => {
             public_id:""
         }
         const vendor = new Vendor({
+            authId,
             name,
             email,
-            password: hashedPassword,
             phone,
             businessName,
             profileImg,
@@ -244,7 +243,7 @@ const getAllVendors = async (req, res) => {
 
 const getVendorById = async (req, res) => {
     try {
-        const vendorId = req.params.id;
+        const vendorId = req.vendorId;
         const vendor = await Vendor.findById(vendorId);
         if (!vendor) {
             return res.status(404).json({ message: "Vendor not found, Failed to retrieve vendor By Id." });
@@ -285,20 +284,14 @@ const updateVendor = async (req, res) => {
             }
         }
         // update otehr values
-        const {password, ...otherFields} = req.body;
+        const {...otherFields} = req.body;
         Object.assign(vendor,otherFields);
-        if(password){
-            const hashedPassword = await bcrypt.hash(password, 10);
-            vendor.password = hashedPassword;
-        }
         await vendor.save();
-        // remove password from response
-        const vendorResponse = vendor.toObject();
-        delete vendorResponse.password;
+        // const vendorResponse = vendor.toObject();
         res.status(200).json(
             { 
                 message: "Vendor updated successfully", 
-                vendor:vendorResponse 
+                vendor
             }
         );
     } catch (error) {
