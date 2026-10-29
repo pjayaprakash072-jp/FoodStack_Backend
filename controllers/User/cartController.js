@@ -1,14 +1,48 @@
 const User = require('../../models/User/User')
-const MenuItem = require('../../models/MenuItem')
-
+const {getMenuItemById} = require('../../service/menuService')
+const {getOutletById} = require('../../service/outletService');
+const getItemsWithDetails = async (cart)=>{
+    return Promise.all(
+        cart.map(
+            async(cartItem) =>{
+                if(!cartItem.item){
+                    return null;
+                }
+                const itemId = cartItem.item;
+                const item = await getMenuItemById(itemId);
+                if(!item){
+                    return null;
+                };
+                let outlet = null;
+                if(item.outlet?._id){
+                    const outletId = item.outlet?._id;
+                    outlet = await getOutletById(outletId);
+                }
+                return {
+                    item,
+                    outlet,
+                    quantity:cartItem.quantity
+                }
+            }
+        )
+    ).then((items)=> items.filter(Boolean));
+}
 const getCartItems = async (req,res)=>{
     try {
         const userId = req.user._id;
-        const user = await User.findById(userId).populate({path:"cart.item",populate:{path:"outlet"}})
+        const user = await User.findById(userId);
+        if(!user){
+            return res.statu(400).json(
+                {
+                    message:"User not found"
+                }
+            )
+        }
+        const cartItems = await getItemsWithDetails(user.cart);
         res.status(200).json(
             {
                 message:"Cart Item retrieved successfully!",
-                cartItems:user.cart
+                cartItems
             }
         )
     } catch (error) {
@@ -25,7 +59,7 @@ const getCartItems = async (req,res)=>{
 const addCartItem = async (req,res)=>{
     try {
         const itemId= req.body.item
-        const item = await MenuItem.findById(itemId);
+        const item = await getMenuItemById(itemId);
         if(!item){
             return res.status(400).json(
                 {
@@ -48,11 +82,11 @@ const addCartItem = async (req,res)=>{
             )
         }
         await user.save();
-        await user.populate({path:"cart.item",populate:{path:"outlet"}})
+        const cartItems = await getItemsWithDetails(user.cart);
         res.status(200).json(
             {
                 message:"Cart Updated Successfully!",
-                cartItems:user.cart
+                cartItems
             }
         )
     } catch (error) {
@@ -67,7 +101,7 @@ const addCartItem = async (req,res)=>{
 }
 const removeItem = async(req,res)=>{
     try {
-        await User.findByIdAndUpdate(
+        const user = await User.findByIdAndUpdate(
             req.userId,
             {
                 $pull:{
@@ -75,13 +109,21 @@ const removeItem = async(req,res)=>{
                         item:req.params.itemId
                     }
                 }
-            }
+            },
+            {returnDocument:"after"}
         )
-        const user = await User.findById(req.userId).populate({path:"cart.item",populate:{path:"outlet"}})
+        if(!user){
+            return res.status(404).json(
+                {
+                    message:"User not found."
+                }
+            )
+        }
+        const cartItems = await getItemsWithDetails(user.cart);
         res.status(200).json(
             {
                 message:"Item removed successfully, updated cartItems",
-                cartItems:user.cart
+                cartItems
             }
         )
         
@@ -109,9 +151,9 @@ const updateCart = async(req,res)=>{
                 }
             },
             {
-                returnDocument: "after"
+                returnDocument:"after"
             }
-        ).populate({path:"cart.item",populate:{path:"outlet"}})
+        )
         if(!user){
             return res.status(400).json(
                 {
@@ -119,10 +161,11 @@ const updateCart = async(req,res)=>{
                 }
             )
         }
+        const cartItems = await getItemsWithDetails(user.cart);
         res.status(200).json(
             {
                 message:"quantity Updated successfully!",
-                cartItems:user.cart
+                cartItems
             }
         )
     } catch (error) {
@@ -184,7 +227,7 @@ const mergeCart = async(req,res)=>{
             if(existingItem){
                 existingItem.quantity += quantity;
             }else{
-                const item = await MenuItem.findById(itemId)
+                const item = await getMenuItemById(itemId);
                 if(!item){
                     continue;
                 }
@@ -197,11 +240,11 @@ const mergeCart = async(req,res)=>{
             }
         }
         await user.save();
-        await user.populate({path:"cart.item",populate:{path:"outlet"}})
+        const cartItems = await getItemsWithDetails(user.cart);
         res.status(200).json(
             {
                 message:"Cart merged successfully!",
-                cartItems:user.cart
+                cartItems
             }
         )
     } catch (error) {
