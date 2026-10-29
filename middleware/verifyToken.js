@@ -7,12 +7,13 @@ const {getCache} = require('../utils/cache')
 const verifyToken = async (req, res, next) => {
 
     const token = req.headers.token;
+    console.log(token);
     try {
         // 1. Check token
         if (!token) {
             return res.status(401).json(
                 {
-                    message: "Access denied. No token provided."
+                    message: "Access denied. No token provided.(vendor)"
                 }
             );
         }

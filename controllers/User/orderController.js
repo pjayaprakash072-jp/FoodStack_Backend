@@ -5,19 +5,21 @@ const Address = require('../../models/User/Address')
 const Order = require('../../models/User/Order')
 const User = require('../../models/User/User')
 const Outlet = require('../../models/Outlet')
-const Vendor = require('../../models/Vendor')
+const {getMenuItemById} = require('../../service/menuService');
+const {getOutletById} = require('../../service/outletService');
 const createOrder = async(req,res)=>{
 
     try {
-        const cartItems= Array.isArray(req.body.items) ? req.body.items : [];
+        const cartItems= Array.isArray(req.body.items)
+        ? req.body.items 
+        : [];
         if(!cartItems.length) return res.status(400).json(
             {
                 message:"Cart is empty!"
             }
         )
         const outletId = req.body.outlet
-        console.log("outletId", outletId)
-        const outlet = await Outlet.findById(outletId);
+        const outlet = await getOutletById(outletId);
         if(!outlet){
             return res.status(400).json(
                 {
@@ -25,25 +27,21 @@ const createOrder = async(req,res)=>{
                 }
             )
         }
-        const itemIds = cartItems.map((x)=>x._id);
-        const validOutlet = await Outlet.exists(
-            {
-                _id:outletId,
-                menuItems:{$all:itemIds}
-            }
-        )
-        if(!validOutlet){
-            return res.status(400).json(
-                {
-                    message:"One or more items do not belong to this outler."
-                }
+        //check that each item belongs to this outlet.
+        const outletMenuImteIds = new Set(
+            (outlet.menuItems || []).map(
+                (item)=> String(typeof  item === "object" && item !== null ? item._id : item)
             )
-        }
-        const vendor = await Vendor.findById(outlet.vendor);
-        if(!vendor){
+        );
+        const requestedIds = cartItems.map(
+            (item)=> String(item._id || "")
+        )
+        if(requestedIds.some(
+            (id)=>!id || !outletMenuImteIds.has(id)
+        )){
             return res.status(400).json(
                 {
-                    message:"Vendor not found to place Order."
+                    message:"One or more items do not belong to this outlet."
                 }
             )
         }
@@ -51,7 +49,7 @@ const createOrder = async(req,res)=>{
         for(const x of cartItems){
             const id = x._id;
             
-            const item = await MenuItem.findById(id);
+            const item = await getMenuItemById(id);
             if(!item) return res.status(400).json(
                 {
                     message:"One of the cart item no longer Exists"
@@ -98,6 +96,7 @@ const createOrder = async(req,res)=>{
             {
                 user:req.userId,
                 outlet:outletId,
+                vendor:outlet.vendor?._id,
                 items,
                 deliveryAddress,
                 subTotal,
@@ -117,13 +116,8 @@ const createOrder = async(req,res)=>{
             )
         }
         user.orders.push(order._id);
-        outlet.orders.push(order._id);
-        vendor.orders.push(order._id);
         await user.save();
         await order.save();
-        await outlet.save();
-        await vendor.save();
-
         const io = req.app.get("io");
         if(io){
             const roomName = `outlet:${outletId}`;
@@ -192,7 +186,7 @@ const getAllOrdersByUser = async(req,res)=>{
 const getAllOrderByVendor = async (req,res)=>{
     try {
         const vendorId = req.vendorId;
-        const orders = await Vendor.findById(vendorId).populate("orders");
+        const orders = await Order.find({vendor:vendorId});
         if(!orders){
             return res.status(400).json(
                 {
@@ -203,7 +197,7 @@ const getAllOrderByVendor = async (req,res)=>{
         res.status(200).json(
             {
                 message:"orders retrieved successfully!",
-                orders:orders.orders
+                orders
             }
         )
     } catch (error) {
@@ -248,9 +242,8 @@ const getOrdersByOutlet = async (req,res)=>{
     try {
         const outletId = req.outletId;
         console.log(outletId)
-        const outlet = await Outlet.findById(outletId).populate("orders");
-        console.log(outlet);
-        if(!outlet){
+        const orders = await Order.find({outlet:outletId})
+        if(!orders){
             return res.status(400).json(
                 {
                     message:"Orders not found."
@@ -260,7 +253,7 @@ const getOrdersByOutlet = async (req,res)=>{
         res.status(200).json(
             {
                 messsage:"Orders retrieved succcessfully for the outlet.",
-                orders:outlet.orders
+                orders
             }
         )
         
@@ -276,7 +269,6 @@ const getOrdersByOutlet = async (req,res)=>{
 }
 const updateOrder = async(req,res)=>{
     try {
-        console.log(req.body)
         const orderId = req.params.orderId;
         const {paymentStatus,orderStatus} = req.body;
         if(!paymentStatus && !orderStatus) {
@@ -319,7 +311,7 @@ const updateOrder = async(req,res)=>{
         )
         
     } catch (error) {
-        console.log("Error, Failed to update Order status");
+        console.log("Error, Failed to update Order status",error);
         res.status(500).json(
             {
                 message:"Internal server error, Failed to update Order Status",

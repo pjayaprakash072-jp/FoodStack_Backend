@@ -35,6 +35,11 @@ const orderSchema = new mongoose.Schema(
             required:true,
             ref:"Outlet"
         },
+        vendor:{
+            type:mongoose.Schema.Types.ObjectId,
+            required:true,
+            ref:"Vendor"
+        },
         items:[itemSchema],
         deliveryAddress:{
             type:String,

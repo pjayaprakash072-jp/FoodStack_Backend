@@ -1,11 +1,11 @@
-const MenuItem = require('../../models/MenuItem')
+
 const Address = require('../../models/User/Address')
 const Order = require('../../models/User/Order')
 const User = require('../../models/User/User')
-const Outlet =require('../../models/Outlet')
-const Vendor = require('../../models/Vendor')
 const createRazorpayOrder = require('../../utils/razorpay/createRazorpayOrder')
 const verifyRazorpayPayment = require('../../utils/razorpay/verifyRazorpayPayment')
+const {getMenuItemById} = require('../../service/menuService')
+const {getOutletById} = require('../../service/outletService');
 const createPayment = async(req,res)=>{
     try {
         const cartItems = Array.isArray(req.body.items)? req.body.items:[];
@@ -18,7 +18,7 @@ const createPayment = async(req,res)=>{
         }
         let subTotal = 0;
         for(const x of cartItems){
-            const item = await MenuItem.findById(x._id);
+            const item = await getMenuItemById(x._id);
             if(!item){
                 return res.status(400).json(
                     {
@@ -101,7 +101,7 @@ const verifyPayment = async(req,res)=>{
         let subTotal = 0;
         for(const x of cartItems){
             const id= x._id;
-            const item = await MenuItem.findById(id);
+            const item = await getMenuItemById(id);
             if(!item){
                 return res.status(400).json(
                     {
@@ -134,10 +134,13 @@ const verifyPayment = async(req,res)=>{
             address.state,
             address.pincode
         ].filter(Boolean).join(", ");
+        const outlet = await getOutletById(outletId);
+
         const order = new Order(
             {
                 user:req.userId,
                 outlet:outletId,
+                vendor:outlet.vendor?._id,
                 items,
                 deliveryAddress,
                 subTotal,
@@ -158,15 +161,9 @@ const verifyPayment = async(req,res)=>{
                 }
             )
         }
-        const outlet = await Outlet.findById(outletId);
-        const vendor = await Vendor.findById(outlet.vendor)
-        outlet.orders.push(order._id);
         user.orders.push(order._id);
-        vendor.orders.push(order._id);
         await user.save();
         await order.save();
-        await outlet.save();
-        await vendor.save();
         const io = req.app.get("io");
         if(io){
             const roomName = `outlet:${outletId}`;

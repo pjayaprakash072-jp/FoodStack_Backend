@@ -88,12 +88,6 @@ const outletSchema = new mongoose.Schema(
                 ref:"MenuItem"
             }
         ],
-        orders:[
-            {
-                type:mongoose.Schema.Types.ObjectId,
-                ref:"Order"
-            }
-        ],
         manager:{
             type:mongoose.Schema.Types.ObjectId,
             ref:"Manager"

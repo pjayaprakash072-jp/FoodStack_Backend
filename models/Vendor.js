@@ -73,12 +73,6 @@ const vendorSchema = new mongoose.Schema(
                 ref :"Outlet"
             }
         ],
-        orders:[
-            {
-                type:mongoose.Schema.Types.ObjectId,
-                ref:"Order"
-            }
-        ],
         managers:[
             {
                 type:mongoose.Schema.Types.ObjectId,
