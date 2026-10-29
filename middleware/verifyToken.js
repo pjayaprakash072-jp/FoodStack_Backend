@@ -80,7 +80,7 @@ const verifyToken = async (req, res, next) => {
         console.error(error);
         return res.status(403).json(
             {
-                message: "Internal server error, Token is InValid! OR session id is not verified.",
+                message: "Internal server error, Token is InValid! OR session id is not verified.(vendor)",
                 error: error.message
             }
         );

@@ -3,8 +3,6 @@ const Vendor = require('../models/Auth/VendorAuth');
 const {getCache} = require('../utils/cache')
 const verifyTokenAuth = async(req,res,next)=>{
     const token = req.headers.token;
-    console.log(token)
-    console.log(req.body)
     try {
         if(!token){
             return res.status(401).json(

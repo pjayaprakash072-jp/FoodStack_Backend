@@ -240,9 +240,37 @@ const updateVendorAuth =  async(req,res)=>{
         )
     }
 }
+const deleteVendorAuth = async (req,res)=>{
+    try {
+        const authId = req.authId;
+        const vendor = await Vendor.findById(authId);
+        if(!vendor){
+            return res.status(400).json(
+                {
+                    message:"Failed to delete the VendorAuth"
+                }
+            )
+        }
+        await Vendor.findByIdAndDelete(authId);
+        res.status(200).json(
+            {
+                message:"vendorAuth deleted Successfully"
+            }
+        )
+    } catch (error) {
+        console.log(error);
+        res.status(500).json(
+            {
+                message:"Internal server error,Failed to delete vendorAuth",
+                error:error.message
+            }
+        )
+    }
+}
 module.exports ={
     createVendorAuth,
     loginVendor,
     googleLogin,
-    updateVendorAuth
+    updateVendorAuth,
+    deleteVendorAuth
 }

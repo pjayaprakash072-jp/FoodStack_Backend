@@ -233,6 +233,7 @@ const deleteVendor = async (req, res) => {
             await cloudinary.uploader.destroy(vendor.profileImg.public_id);
         }
         await Vendor.findByIdAndDelete(vendorId);
+        console.log("deleted.")
         res.status(200).json(
             { 
                 message: "Vendor deleted successfully", 
