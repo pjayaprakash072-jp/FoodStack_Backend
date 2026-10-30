@@ -2,6 +2,11 @@ const mongoose = require('mongoose')
 
 const outletManagerSchema = new mongoose.Schema(
     {
+        authId:{
+            type:mongoose.Schema.Types.ObjectId,
+            ref:"ManagerAuth",
+            required:true
+        },
         name:{
             type:String,
             trim:true
@@ -12,7 +17,6 @@ const outletManagerSchema = new mongoose.Schema(
             required:true
         },
         email:String,
-        password:String,
         outlet:{
             type:mongoose.Schema.Types.ObjectId,
             ref:"Outlet"

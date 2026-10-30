@@ -4,8 +4,8 @@ const MenuCategory = require('../models/MenuCategory');
 const MenuItem = require('../models/MenuItem');
 const cloudinary = require('../config/cloudinary');
 const Manager = require('../models/Manager');
-const bcrypt = require('bcryptjs')
 const {getCache , setCache, deleteCache} = require('../utils/cache')
+const {crateManagerAuth} = require('../service/managerService')
 
 const createOutlet = async (req, res) => {
     try {
@@ -24,7 +24,7 @@ const createOutlet = async (req, res) => {
             city,
             area,
             name,
-            emial,
+            email,
             password,
             phone,
         }
@@ -67,13 +67,14 @@ const createOutlet = async (req, res) => {
             area,
             vendor: vendor._id
         });
-        const hashedPassword = await  bcrypt.hash(password,10);
+        const managerAuth = await crateManagerAuth({name,email,password,phone});
+        console.log(managerAuth);
         const manager = new Manager(
             {
+                authId:managerAuth._id,
                 name,
-                emial,
+                email,
                 phone,
-                password:hashedPassword,
                 vendor:vendor._id,
                 outlet:newOutlet._id
             }

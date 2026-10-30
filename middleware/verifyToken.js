@@ -72,9 +72,11 @@ const verifyToken = async (req, res, next) => {
             req.user = user;
         }
         if(decoded.role ==="manager"){
-            req.managerId = decoded.id;
-            req.outletId = decoded.outletId;
-            req.manager = await Manager.findById(decoded.id);
+            const authId = decoded.id;
+            const manager = await Manager.findOne({authId});
+            req.managerId = manager.id;
+            req.outletId = manager.outlet;
+            req.manager = manager;
         }
         next();
     } catch (error) {

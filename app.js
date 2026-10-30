@@ -18,6 +18,7 @@ const paymentRoutes = require('./routes/User/paymentRoutes')
 const managerRoutes = require('./routes/managerRoutes')
 const vendorAuthRoutes = require('./routes/vendroAuthRoutes')
 const userAuthRoutes = require('./routes/User/userAuthRoutes')
+const managerAuthRoutes = require('./routes/managerAuthRoutes');
 
 const { redisClient } = require("./config/redis")
 
@@ -42,6 +43,7 @@ app.use("/address",addressRoutes);
 app.use("/order",orderRoutes);
 app.use("/payment",paymentRoutes);
 app.use("/manager",managerRoutes)
+app.use("/managerAuth",managerAuthRoutes)
 
 // HOME route.
 app.get('/',(req,res)=>{

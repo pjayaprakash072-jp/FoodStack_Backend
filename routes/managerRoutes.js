@@ -2,13 +2,13 @@ const router = require("express").Router();
 const verifyToken = require('../middleware/verifyToken');
 const authorizeRoles = require('../middleware/authorizeRoles');
 const upload = require('../middleware/upload')
-const {loginManager} = require('../controllers/managerController')
+const {getManager} = require('../controllers/managerController')
 const {updateOutlet} = require('../controllers/outletController')
 const {getMenuCategoriesByOutlet,getMenuCategoryById,createMenuCategory,updateMenuCategory,deleteMenuCategory} = require('../controllers/menuCategoryController')
 const {getMenuitemsByOutlet,getMenuItemsByCategory,getMenuItemById,createMenuItem,updateMenuItem,deleteMenuItem} = require('../controllers/menuItemController')
 const {getOrdersByOutlet} = require('../controllers/User/orderController')
 
-router.post('/login',loginManager);
+router.get('/get',verifyToken,getManager);
 router.put('/outlet/update',verifyToken,authorizeRoles("manager"),updateOutlet);
 router.get('/categories/outlet',verifyToken,authorizeRoles("manager"),getMenuCategoriesByOutlet);
 router.post('/category/create',verifyToken,authorizeRoles("manager"),upload.single("image"),createMenuCategory);

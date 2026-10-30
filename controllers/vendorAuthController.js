@@ -167,6 +167,13 @@ const loginVendor = async (req, res) => {
         if (!vendor) {
             return res.status(404).json({ message: "Vendor not found, Failed to login!" });
         }
+        if(!vendor.password){
+            return res.statu(400).json(
+                {
+                    message:"You don't have password!, please update password through forgot password."
+                }
+            )
+        }
         const isMatch = await bcrypt.compare(password, vendor.password);
         if (!isMatch) {
             return res.status(401).json({ message: "Invalid credentials" });
