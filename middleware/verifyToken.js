@@ -7,7 +7,6 @@ const {getCache} = require('../utils/cache')
 const verifyToken = async (req, res, next) => {
 
     const token = req.headers.token;
-    console.log(token);
     try {
         // 1. Check token
         if (!token) {

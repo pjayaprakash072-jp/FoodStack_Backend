@@ -1,5 +1,6 @@
 const axios = require("axios");
 const verifyCaptcha = async(req,res,next)=>{
+    console.log("yes")
     try {
         const {captchaToken} = req.body;
         if(!captchaToken){
