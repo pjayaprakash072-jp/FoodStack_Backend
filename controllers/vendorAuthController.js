@@ -168,7 +168,7 @@ const loginVendor = async (req, res) => {
             return res.status(404).json({ message: "Vendor not found, Failed to login!" });
         }
         if(!vendor.password){
-            return res.statu(400).json(
+            return res.status(400).json(
                 {
                     message:"You don't have password!, please update password through forgot password."
                 }
