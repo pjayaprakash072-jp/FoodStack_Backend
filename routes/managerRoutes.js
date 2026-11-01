@@ -2,13 +2,24 @@ const router = require("express").Router();
 const verifyToken = require('../middleware/verifyToken');
 const authorizeRoles = require('../middleware/authorizeRoles');
 const upload = require('../middleware/upload')
-const {getManager} = require('../controllers/managerController')
-const {updateOutlet} = require('../controllers/outletController')
-const {getMenuCategoriesByOutlet,getMenuCategoryById,createMenuCategory,updateMenuCategory,deleteMenuCategory} = require('../controllers/menuCategoryController')
-const {getMenuitemsByOutlet,getMenuItemsByCategory,getMenuItemById,createMenuItem,updateMenuItem,deleteMenuItem} = require('../controllers/menuItemController')
 const {getOrdersByOutlet} = require('../controllers/User/orderController')
-
+const {
+    getManager,
+    updateOutlet,
+    getMenuCategoriesByOutlet,
+    createMenuCategory,
+    getMenuCategoryById,
+    updateMenuCategory,
+    deleteMenuCategory,
+    getMenuitemsByOutlet,
+    getMenuItemsByCategory,
+    getMenuItemById,
+    createMenuItem,
+    updateMenuItem,
+    deleteMenuItem
+} = require('../controllers/managerController')
 router.get('/get',verifyToken,getManager);
+
 router.put('/outlet/update',verifyToken,authorizeRoles("manager"),updateOutlet);
 router.get('/categories/outlet',verifyToken,authorizeRoles("manager"),getMenuCategoriesByOutlet);
 router.post('/category/create',verifyToken,authorizeRoles("manager"),upload.single("image"),createMenuCategory);
@@ -21,5 +32,8 @@ router.get("/items/get/:menuItemId",verifyToken,authorizeRoles("manager"),getMen
 router.post('/items/add/:categoryId',verifyToken,authorizeRoles("manager"),upload.single('image'),createMenuItem);
 router.put("/items/update/:menuItemId",verifyToken,authorizeRoles("manager"),upload.single('image'),updateMenuItem);
 router.delete("/items/delete/:menuItemId",verifyToken,authorizeRoles("manager"),deleteMenuItem)
+
+
+
 router.get("/orders",verifyToken,authorizeRoles("manager"),getOrdersByOutlet)
 module.exports =router 

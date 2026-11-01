@@ -10,7 +10,7 @@ router.post("/create", verifyToken, authorizeRoles("vendor"), upload.single("ima
 router.get("/getall", outletController.getAllOutlets);
 router.get("/get/:id", outletController.getOutletById);
 router.get("/vendor/:vendorId", outletController.getOutletsByVendorId);
-router.put("/update/:id", verifyToken, authorizeRoles("vendor"), upload.single("image"), outletController.updateOutlet);
+router.put("/update/:id", verifyToken, authorizeRoles("vendor", "manager"), upload.single("image"), outletController.updateOutlet);
 router.delete("/delete/:id", verifyToken, authorizeRoles("vendor"), outletController.deleteOutlet);
 
 module.exports = router;
