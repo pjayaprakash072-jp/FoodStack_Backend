@@ -12,7 +12,9 @@ const {
     getMenuItemById_s,
     createMenuItem_s,
     updateMenuItem_s,
-    deleteMenuItem_s
+    deleteMenuItem_s,
+    getOrdersByOutlet_s,
+    updateOrder_s
 } = require('../service/outletServices')
 
 const getManager = async(req,res)=>{
@@ -53,9 +55,16 @@ const getManager = async(req,res)=>{
 }
 const updateOutlet = async (req,res)=>{
     try {
-        const payload = req.body;
         const token = req.headers.token;
         const id = req.outletId;
+        let payload = req.body;
+        if(req.file){
+            const image_m = {
+                url:req.file.path,
+                public_id:req.file.filename
+            }
+            payload = {...payload,image_m};
+        }
         const result = await updateOutlet_s(payload,id,token);
         res.status(200).json(
             {
@@ -77,9 +86,6 @@ const getMenuCategoriesByOutlet = async(req,res)=>{
     try {
         const token = req.headers.token;
         const result = await getMenuCategoriesByOutlet_s(req.outletId,token);
-        console.log( " By manager---------------------------------------------------",
-            result.menuCategories
-        )
         res.status(200).json(
             {
                 message:result.message,
@@ -101,8 +107,15 @@ const getMenuCategoriesByOutlet = async(req,res)=>{
 const createMenuCategory = async(req,res)=>{
     try {
         const token = req.headers.token;
-        const payload = req.body;
         const outletId = req.outletId;
+        let payload = req.body;
+        if(req.file){
+            const image_m = {
+                url:req.file.path,
+                public_id:req.file.filename
+            }
+            payload = {...payload,image_m};
+        }
         const result = await createMenuCategory_s(payload,outletId,token);
         res.status(200).json(
             {
@@ -147,7 +160,14 @@ const getMenuCategoryById = async(req,res)=>{
 const updateMenuCategory = async(req,res)=>{
     try {
         const token = req.headers.token;
-        const payload = req.body;
+        let payload = req.body;
+        if(req.file){
+            const image_m = {
+                url:req.file.path,
+                public_id:req.file.filename
+            }
+            payload = {...payload,image_m};
+        }
         const id = req.params.id;
         const result = await updateMenuCategory_s(payload,id,token);
         res.status(200).json(
@@ -263,7 +283,14 @@ const createMenuItem = async(req,res)=>{
     try {
         const token = req.headers.token;
         const id = req.params.categoryId;
-        const payload = req.body;
+        let payload = req.body;
+        if(req.file){
+            const image_m = {
+                url:req.file.path,
+                public_id:req.file.filename
+            }
+            payload = {...payload,image_m};
+        }
         const result = await createMenuItem_s(payload,id,token);
         res.status(200).json(
             {
@@ -287,7 +314,14 @@ const updateMenuItem = async(req,res)=>{
     try {
         const token = req.headers.token;
         const id = req.params.menuItemId;
-        const payload = req.body;
+        let payload = req.body;
+        if(req.file){
+            const image_m = {
+                url:req.file.path,
+                public_id:req.file.filename
+            }
+            payload = {...payload,image_m};
+        }
         const result = await updateMenuItem_s(payload,id,token);
         res.status(200).json(
             {
@@ -330,7 +364,62 @@ const deleteMenuItem = async(req,res)=>{
         
     }
 }
+const getOrdersByOutlet = async(req,res)=>{
+    try {
+        console.log("hitting controller")
+        const token = req.headers.token;
+        const id = req.outletId;
+        const result = await getOrdersByOutlet_s(id,token);
+        res.status(200).json(
+            {
+                message:result.message,
+                orders:result.orders
+            }
+        )
+        
+    } catch (error) {
+        console.log("Error, Failed to getOrdersByOutlet(manager)",error);
+        res.status(500).json(
+            {
+                message:"Internal server error, Failed to getOrdersByOutlet(manager)",
+                error:error.message
+            }
+        )
+        
+    }
+}
 
+const updateOrder = async(req,res)=>{
+    try {
+        const token = req.headers.token;
+        const id = req.params.orderId;
+        let payload = req.body;
+        if(req.file){
+            const image_m = {
+                url:req.file.path,
+                public_id:req.file.filename
+            }
+            payload = {...payload,image_m};
+        }
+        const result = await updateOrder_s(payload,id,token);
+        res.status(200).json(
+            {
+                message:result.message,
+                order:result.order
+            }
+        )
+        
+    } catch (error) {
+        console.log("Error, Failed to update Order Status(manager)",error);
+        res.status(500).json(
+            {
+                message:"Internal server error, Failed to update Order Status(manager)",
+                error:error.message
+            }
+        )
+        
+    }
+}
 module.exports = {
     getManager,
     updateOutlet,
@@ -344,5 +433,7 @@ module.exports = {
     getMenuItemById,
     createMenuItem,
     updateMenuItem,
-    deleteMenuItem
+    deleteMenuItem,
+    getOrdersByOutlet,
+    updateOrder
 }

@@ -60,7 +60,6 @@ const getMenuCategoriesByOutlet_s = async(outletId,token)=>{
                 }
             }
         )
-        console.log("Response is :" , response.data);
         return unwrap(response);
     } catch (error) {
         if(
@@ -292,6 +291,55 @@ const deleteMenuItem_s = async(id,token)=>{
         throw error;
     }
 }
+const getOrdersByOutlet_s = async(outletId,token)=>{
+    try {
+        const response = await outletService.get(
+            `/order/outlet`,
+            {
+                headers:{
+                    token:token
+                },
+                params:{
+                    outletId
+                }
+            }
+        )
+        return unwrap(response);
+    } catch (error) {
+        if(
+            error.response?.status === 400 || 
+            error.response?.status === 404
+        ){
+            return null;
+        }
+        throw error;
+    }
+}
+const updateOrder_s = async(payload,orderId,token)=>{
+    try {
+        const response = await outletService.put(
+            `/order/update`,
+            payload,
+            {
+                headers:{
+                    token:token
+                },
+                params:{
+                    orderId
+                }
+            }
+        )
+        return unwrap(response);
+    } catch (error) {
+        if(
+            error.response?.status === 400 || 
+            error.response?.status === 404
+        ){
+            return null;
+        }
+        throw error;
+    }
+}
 module.exports = {
     getOutletById_s,
     updateOutlet_s,
@@ -305,5 +353,7 @@ module.exports = {
     getMenuItemById_s,
     createMenuItem_s,
     updateMenuItem_s,
-    deleteMenuItem_s
+    deleteMenuItem_s,
+    getOrdersByOutlet_s,
+    updateOrder_s
 }

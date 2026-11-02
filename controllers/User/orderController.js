@@ -240,7 +240,7 @@ const getOneOrder = async(req,res)=>{
 
 const getOrdersByOutlet = async (req,res)=>{
     try {
-        const outletId = req.outletId;
+        const outletId = req.query.outletId;
         console.log(outletId)
         const orders = await Order.find({outlet:outletId})
         if(!orders){
@@ -269,7 +269,7 @@ const getOrdersByOutlet = async (req,res)=>{
 }
 const updateOrder = async(req,res)=>{
     try {
-        const orderId = req.params.orderId;
+        const orderId = req.query.orderId;
         const {paymentStatus,orderStatus} = req.body;
         if(!paymentStatus && !orderStatus) {
             return res.status(400).json(
@@ -299,7 +299,6 @@ const updateOrder = async(req,res)=>{
             io.to(roomName).emit("order-status-updated",{
                 orderId:String(order._id),
                 orderStatus:order.orderStatus,
-                // paymentStatus:order.paymentStatus
             })
             console.log(`Order status updated and emitted to ${roomName}`)
         }

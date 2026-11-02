@@ -220,7 +220,7 @@ const getOutletsByVendorId = async (req, res) => {
 const updateOutlet = async (req, res) => {
     try {
         const outletId = req.role === "manager"? req.outletId : req.query.id;
-        const {outletName,name,...otherFields} = req.body;
+        const {outletName,name,image_m,...otherFields} = req.body;
         const outlet = await Outlet.findById(outletId);
         if (!outlet) {
             return res.status(404).json({ message: "Outlet not found" });
@@ -231,7 +231,10 @@ const updateOutlet = async (req, res) => {
                 await cloudinary.uploader.destroy(outlet.image.public_id);
             }
             //save new cloudinary image details.
-            outlet.image = {
+            outlet.image = image_m?{
+                public_id:image_m.public_id,
+                url:image_m.url
+            }  :{
                 public_id: req.file.filename,
                 url: req.file.path
             }

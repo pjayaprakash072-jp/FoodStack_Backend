@@ -12,6 +12,7 @@ const createMenuCategory = async(req,res)=>{
             description,
             displayOrder,
             isActive,
+            image_m
         } = req.body;
 
         const outlet = await Outlet.findById(outletId);
@@ -26,6 +27,10 @@ const createMenuCategory = async(req,res)=>{
         ?{
             url:req.file.path,
             public_id:req.file.filename
+        }:image_m?
+        {
+            url:image_m.url,
+            public_id:image_m.public_id
         }:{
             url:"",
             public_id:""
@@ -201,7 +206,7 @@ const getMenuCategoryById = async(req,res)=>{
 
 const updateMenuCategory = async(req,res)=>{
     try{    
-        console.log(req.body)
+        const {image_m,...otherFields} = req.body;
         const menuCategoryId = req.params.id;
         console.log(menuCategoryId)
         const menuCategory = await MenuCategory.findById(menuCategoryId).populate(
@@ -220,18 +225,21 @@ const updateMenuCategory = async(req,res)=>{
         //getting vendor it to delete the redis key
         const vendorId = menuCategory.outlet.vendor;
         // if new image is uploaded, delete the old image from cloudinary
-        if(req.file){
+        if(req.file || image_m){
             if(menuCategory.image?.public_id){
                 await cloudinary.uploader.destroy(menuCategory.image.public_id);
             }
             //save new cloudinary image details.
-            menuCategory.image = {
+            menuCategory.image =image_m ?  {
+                public_id:image_m.public_id,
+                url:image_m.url
+            }:{
                 public_id: req.file.filename,
                 url: req.file.path
             }
         }
         // update otehr values.
-        Object.assign(menuCategory,req.body);
+        Object.assign(menuCategory,otherFields);
         await menuCategory.save();
         await deleteCache("menuCategories:all",
                 `menuCategories:outlet:${menuCategory.outlet._id}`,
