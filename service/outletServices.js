@@ -22,14 +22,17 @@ const getOutletById_s = async(id)=>{
         throw error;
     }
 }
-const updateOutlet_s = async(payload,token)=>{
+const updateOutlet_s = async(payload,id,token)=>{
     try {
         const response = await outletService.put(
-            "/outlet/update",
+            `/outlet/update`,
             payload,
             {
                 headers:{
                     token:token
+                },
+                params:{
+                    id
                 }
             }
         )
@@ -44,16 +47,20 @@ const updateOutlet_s = async(payload,token)=>{
         throw error;
     }
 }
-const getMenuCategoriesByOutlet_s = async(token)=>{
+const getMenuCategoriesByOutlet_s = async(outletId,token)=>{
     try {
         const response = await outletService.get(
             `/menu-category/outlet`,
             {
                 headers:{
                     token:token
+                },
+                params:{
+                    outletId
                 }
             }
         )
+        console.log("Response is :" , response.data);
         return unwrap(response);
     } catch (error) {
         if(
@@ -65,7 +72,7 @@ const getMenuCategoriesByOutlet_s = async(token)=>{
         throw error;
     }
 }
-const createMenuCategory_s = async(payload,token)=>{
+const createMenuCategory_s = async(payload,outletId,token)=>{
     try {
         const response = await outletService.post(
             `/menu-category/create`,
@@ -73,6 +80,9 @@ const createMenuCategory_s = async(payload,token)=>{
             {
                 headers:{
                     token:token
+                },
+                params:{
+                    outletId
                 }
             }
         )
@@ -108,7 +118,7 @@ const getMenuCategoryById_s = async(id,token)=>{
         throw error;
     }
 }
-const updateMenuCategory_s = async(id,payload,token)=>{
+const updateMenuCategory_s = async(payload,id,token)=>{
     try {
         const response = await outletService.put(
             `/menu-category/update/${id}`,
@@ -151,13 +161,16 @@ const deleteMenuCategory_s = async(id,token)=>{
         throw error;
     }
 }
-const getMenuitemsByOutlet_s = async(token)=>{
+const getMenuitemsByOutlet_s = async(outletId,token)=>{
     try {
         const response = await outletService.get(
             `/menu-item/outlet`,
             {
                 headers:{
                     token:token
+                },
+                params:{
+                    outletId
                 }
             }
         )
@@ -214,7 +227,7 @@ const getMenuItemById_s = async(id,token)=>{
         throw error;
     }
 }
-const createMenuItem_s = async(id,payload,token)=>{
+const createMenuItem_s = async(payload,id,token)=>{
     try {
         const response = await outletService.post(
             `/menu-item/add/${id}`,
@@ -236,7 +249,7 @@ const createMenuItem_s = async(id,payload,token)=>{
         throw error;
     }
 }
-const updateMenuItem_s = async(id,payload,token)=>{
+const updateMenuItem_s = async(payload,id,token)=>{
     try {
         const response = await outletService.put(
             `/menu-item/update/${id}`,

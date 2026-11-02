@@ -34,7 +34,7 @@ const getManager = async(req,res)=>{
             )
         }
         const outlet = await getOutletById_s(manager.outlet);
-        const managerWithOutlet = {...manager,outlet};
+        const managerWithOutlet = {...manager,outlet:outlet.outlet};
         res.status(200).json(
             {
                 message:"Manager record retrieved successfully!",
@@ -55,7 +55,8 @@ const updateOutlet = async (req,res)=>{
     try {
         const payload = req.body;
         const token = req.headers.token;
-        const result = await updateOutlet_s(payload,token);
+        const id = req.outletId;
+        const result = await updateOutlet_s(payload,id,token);
         res.status(200).json(
             {
                 message:result.message,
@@ -75,11 +76,14 @@ const updateOutlet = async (req,res)=>{
 const getMenuCategoriesByOutlet = async(req,res)=>{
     try {
         const token = req.headers.token;
-        const result = await getMenuCategoriesByOutlet_s(token);
+        const result = await getMenuCategoriesByOutlet_s(req.outletId,token);
+        console.log( " By manager---------------------------------------------------",
+            result.menuCategories
+        )
         res.status(200).json(
             {
                 message:result.message,
-                oulet:result.menuCategories
+                menuCategories:result.menuCategories
             }
         )
         
@@ -98,11 +102,12 @@ const createMenuCategory = async(req,res)=>{
     try {
         const token = req.headers.token;
         const payload = req.body;
-        const result = await createMenuCategory_s(payload,token);
+        const outletId = req.outletId;
+        const result = await createMenuCategory_s(payload,outletId,token);
         res.status(200).json(
             {
                 message:result.message,
-                oulet:result.menuCategory
+                menuCategory:result.menuCategory
             }
         )
         
@@ -120,11 +125,11 @@ const createMenuCategory = async(req,res)=>{
 const getMenuCategoryById = async(req,res)=>{
     try {
         const token = req.headers.token;
-        const result = await getMenuCategoryById_s(token);
+        const result = await getMenuCategoryById_s(req.params.id,token);
         res.status(200).json(
             {
                 message:result.message,
-                oulet:result.menuCategory
+                menuCategory:result.menuCategory
             }
         )
         
@@ -143,12 +148,12 @@ const updateMenuCategory = async(req,res)=>{
     try {
         const token = req.headers.token;
         const payload = req.body;
-        const id = req.paramas.id;
-        const result = await updateMenuCategory_s(id,payload,token);
+        const id = req.params.id;
+        const result = await updateMenuCategory_s(payload,id,token);
         res.status(200).json(
             {
                 message:result.message,
-                oulet:result.menuCategory
+                menuCategory:result.menuCategory
             }
         )
         
@@ -166,12 +171,12 @@ const updateMenuCategory = async(req,res)=>{
 const deleteMenuCategory = async(req,res)=>{
     try {
         const token = req.headers.token;
-        const id = req.paramas.id;
+        const id = req.params.id;
         const result = await deleteMenuCategory_s(id,token);
         res.status(200).json(
             {
                 message:result.message,
-                oulet:result.menuCategory
+                menuCategory:result.menuCategory
             }
         )
         
@@ -189,11 +194,11 @@ const deleteMenuCategory = async(req,res)=>{
 const getMenuitemsByOutlet = async(req,res)=>{
     try {
         const token = req.headers.token;
-        const result = await getMenuitemsByOutlet_s(token);
+        const result = await getMenuitemsByOutlet_s(req.outletId,token);
         res.status(200).json(
             {
                 message:result.message,
-                oulet:result.menuItems
+                menuItems:result.menuItems
             }
         )
         
@@ -216,7 +221,7 @@ const getMenuItemsByCategory = async(req,res)=>{
         res.status(200).json(
             {
                 message:result.message,
-                oulet:result.menuItems
+                menuItems:result.menuItems
             }
         )
         
@@ -239,7 +244,7 @@ const getMenuItemById = async(req,res)=>{
         res.status(200).json(
             {
                 message:result.message,
-                oulet:result.menuItem
+                menuItem:result.menuItem
             }
         )
         
@@ -259,11 +264,11 @@ const createMenuItem = async(req,res)=>{
         const token = req.headers.token;
         const id = req.params.categoryId;
         const payload = req.body;
-        const result = await createMenuItem_s(id,payload,token);
+        const result = await createMenuItem_s(payload,id,token);
         res.status(200).json(
             {
                 message:result.message,
-                oulet:result.menuItem
+                menuItem:result.menuItem
             }
         )
         
@@ -283,11 +288,11 @@ const updateMenuItem = async(req,res)=>{
         const token = req.headers.token;
         const id = req.params.menuItemId;
         const payload = req.body;
-        const result = await updateMenuItem_s(id,payload,token);
+        const result = await updateMenuItem_s(payload,id,token);
         res.status(200).json(
             {
                 message:result.message,
-                oulet:result.menuItem
+                menuItem:result.menuItem
             }
         )
         
@@ -310,7 +315,7 @@ const deleteMenuItem = async(req,res)=>{
         res.status(200).json(
             {
                 message:result.message,
-                oulet:result.menuItem
+                menuItem:result.menuItem
             }
         )
         
