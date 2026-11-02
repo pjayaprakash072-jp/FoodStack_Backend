@@ -19,4 +19,59 @@ const crateManagerAuth = async(payload) => {
         throw error;
     }
 }
-module.exports = {crateManagerAuth}
+const crateManager = async(payload) => { 
+    try {
+        const response = await managerService.post(
+            "/manager/create",
+            payload
+        )
+        return response.data.manager;
+    } catch (error) {
+        if(error.response?.status === 404 || error.response?.status === 400){
+            return null;
+        }
+        throw error;
+    }
+}
+const updateManager = async(outletId,payload) => { 
+    try {
+        const response = await managerService.put(
+            `/manager/update?outletId=${outletId}`,
+            payload,
+        )
+        console.log(response);
+        return response.data.manager;
+    } catch (error) {
+        if(error.response?.status === 404 || error.response?.status === 400){
+            return null;
+        }
+        throw error;
+    }
+}
+const getManager = async(phone,token) => { 
+    try {
+        const response = await managerService.post(
+            "/manager/get",
+            {
+                headers:{
+                    token
+                },
+                params:{
+                    phone
+                }
+            }
+        )
+        return response.data.managerAuth;
+    } catch (error) {
+        if(error.response?.status === 404 || error.response?.status === 400){
+            return null;
+        }
+        throw error;
+    }
+}
+module.exports = {
+    crateManagerAuth,
+    crateManager,
+    getManager,
+    updateManager
+}

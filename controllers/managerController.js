@@ -1,4 +1,5 @@
 const Manager = require('../models/Manager');
+const { crateManagerAuth } = require('../service/managerService');
 const {
     getOutletById_s,
     updateOutlet_s,
@@ -17,10 +18,54 @@ const {
     updateOrder_s
 } = require('../service/outletServices')
 
+const createManager = async(req,res)=>{
+    try {
+        const {
+            authId,
+            name,
+            email,
+            phone,
+            vendor,
+            outlet
+        } = req.body;
+        const manager = new Manager(
+            {
+                authId,
+                name,
+                email,
+                phone,
+                vendor,
+                outlet
+            }
+        )
+        await manager.save();
+        res.status(201).json(
+            {
+                message:"manager Created successfully",
+                crateManagerAuth
+            }
+        )
+    } catch (error) {
+        console.log("Error, Failed to create the manager",error);
+        res.status(500).json(
+            {
+                message:"Internal server error, Failed to create manager!",
+                error:error.message
+            }
+        )
+    }
+}
 const getManager = async(req,res)=>{
     try {
-        const managerId = req.managerId;
-        const manager = await Manager.findById(managerId);
+        const {phone} = req.query;
+        let manager;
+        if(phone){
+            manager =await Manager.findOne({phone});
+        }else{
+            const managerId = req.managerId;
+            manager = await Manager.findById(managerId);
+
+        }
         if(!manager){
             return res.status(400).json(
                 {
@@ -102,6 +147,32 @@ const getMenuCategoriesByOutlet = async(req,res)=>{
             }
         )
         
+    }
+}
+const updateManager = async (req,res)=>{
+    try {
+        const outletId = req.query.outletId;
+        const {remove,...otherFields} = req.body;
+        const manager = await findOnd({outletId});
+        if(remove){
+            manager.outlet = null;
+        }
+        Object.assign(manager,otherFields);
+        await manager.save();
+        res.status(200).json(
+            {
+                message:"Manager update successfull!",
+                manager
+            }
+        )
+    } catch (error) {
+        console.log("Error, Failed to update the manager!",error);
+        res.status(500).json(
+            {
+                message:"Internal server Error, Failed to update manager",
+                error:error.message
+            }
+        )
     }
 }
 const createMenuCategory = async(req,res)=>{
@@ -421,7 +492,9 @@ const updateOrder = async(req,res)=>{
     }
 }
 module.exports = {
+    createManager,
     getManager,
+    updateManager,
     updateOutlet,
     getMenuCategoriesByOutlet,
     createMenuCategory,
