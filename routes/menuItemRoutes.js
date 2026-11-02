@@ -7,7 +7,7 @@ const router = require('express').Router();
 router.post('/add/:categoryId',verifyToken,authorizeRoles("vendor", "manager"), upload.single('image'),menuItemController.createMenuItem);
 router.get('/vendor/:vendorId',menuItemController.getAllMenuItemsByVendor);
 router.get('/getall',menuItemController.getAllMenuItems);
-router.get('/outlet/:outletId',menuItemController.getMenuitemsByOutlet);
+router.get('/outlet',menuItemController.getMenuitemsByOutlet);
 router.get('/category/:categoryId',menuItemController.getMenuItemsByCategory);
 router.put('/update/:menuItemId',verifyToken, authorizeRoles("vendor", "manager"), upload.single('image'),menuItemController.updateMenuItem);
 router.delete('/delete/:menuItemId',verifyToken,authorizeRoles("vendor", "manager"),menuItemController.deleteMenuItem);

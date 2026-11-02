@@ -219,7 +219,7 @@ const getOutletsByVendorId = async (req, res) => {
 
 const updateOutlet = async (req, res) => {
     try {
-        const outletId = req.role === "manager"? req.outletId : req.params.id;
+        const outletId = req.role === "manager"? req.outletId : req.query.id;
         const {outletName,name,...otherFields} = req.body;
         const outlet = await Outlet.findById(outletId);
         if (!outlet) {
