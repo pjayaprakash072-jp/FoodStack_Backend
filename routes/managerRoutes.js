@@ -2,7 +2,6 @@ const router = require("express").Router();
 const verifyToken = require('../middleware/verifyToken');
 const authorizeRoles = require('../middleware/authorizeRoles');
 const upload = require('../middleware/upload')
-const {getOrdersByOutlet} = require('../controllers/User/orderController')
 const {
     getManager,
     updateOutlet,
@@ -16,7 +15,9 @@ const {
     getMenuItemById,
     createMenuItem,
     updateMenuItem,
-    deleteMenuItem
+    deleteMenuItem,
+    getOrdersByOutlet,
+    updateOrder
 } = require('../controllers/managerController')
 router.get('/get',verifyToken,getManager);
 
@@ -36,4 +37,5 @@ router.delete("/items/delete/:menuItemId",verifyToken,authorizeRoles("manager"),
 
 
 router.get("/orders",verifyToken,authorizeRoles("manager"),getOrdersByOutlet)
+router.put("/order/update/:orderId",verifyToken,authorizeRoles("manager"),updateOrder)
 module.exports =router 
