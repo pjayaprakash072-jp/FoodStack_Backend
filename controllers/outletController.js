@@ -4,7 +4,7 @@ const MenuCategory = require('../models/MenuCategory');
 const MenuItem = require('../models/MenuItem');
 const cloudinary = require('../config/cloudinary');
 const {getCache , setCache, deleteCache} = require('../utils/cache')
-const {crateManagerAuth,crateManagerAuth,getManager,updateManager} = require('../service/managerService')
+const {crateManagerAuth,crateManager,getManager,updateManager} = require('../service/managerService')
 
 const createOutlet = async (req, res) => {
     try {
@@ -329,7 +329,7 @@ const deleteOutlet = async (req, res) => {
                 }
             }
         );
-        await updateManager(outletId,{remove:outletId})
+        await updateManager({remove:outletId},req.headers.token)
 
         // Delete outlet
         await Outlet.findByIdAndDelete(outletId);

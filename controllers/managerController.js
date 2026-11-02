@@ -1,5 +1,4 @@
 const Manager = require('../models/Manager');
-const { crateManagerAuth } = require('../service/managerService');
 const {
     getOutletById_s,
     updateOutlet_s,
@@ -19,30 +18,14 @@ const {
 } = require('../service/outletServices')
 
 const createManager = async(req,res)=>{
+    console.log(req.body);
     try {
-        const {
-            authId,
-            name,
-            email,
-            phone,
-            vendor,
-            outlet
-        } = req.body;
-        const manager = new Manager(
-            {
-                authId,
-                name,
-                email,
-                phone,
-                vendor,
-                outlet
-            }
-        )
+        const manager = new Manager(req.body);
         await manager.save();
         res.status(201).json(
             {
                 message:"manager Created successfully",
-                crateManagerAuth
+                manager
             }
         )
     } catch (error) {
@@ -150,10 +133,11 @@ const getMenuCategoriesByOutlet = async(req,res)=>{
     }
 }
 const updateManager = async (req,res)=>{
+    console.log(req.body);
     try {
         const outletId = req.query.outletId;
         const {remove,...otherFields} = req.body;
-        const manager = await findOnd({outletId});
+        const manager = await Manager.findOne({outlet:outletId});
         if(remove){
             manager.outlet = null;
         }

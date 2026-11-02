@@ -6,6 +6,7 @@ const managerService = axios.create(
     }
 );
 const crateManagerAuth = async(payload) => { 
+    console.log("called auth one")
     try {
         const response = await managerService.post(
             "/managerAuth/create",payload
@@ -14,6 +15,7 @@ const crateManagerAuth = async(payload) => {
         return response.data.managerAuth;
     } catch (error) {
         if(error.response?.status === 404 || error.response?.status === 400){
+            console.log(error.response?.data?.message);
             return null;
         }
         throw error;
@@ -33,13 +35,18 @@ const crateManager = async(payload) => {
         throw error;
     }
 }
-const updateManager = async(outletId,payload) => { 
+const updateManager = async(payload,token) => { 
     try {
         const response = await managerService.put(
-            `/manager/update?outletId=${outletId}`,
+            `/manager/update?outletId=${payload.remove}`,
             payload,
+            {
+                headers:{
+                    token
+                }
+            }
         )
-        console.log(response);
+        console.log(response.data);
         return response.data.manager;
     } catch (error) {
         if(error.response?.status === 404 || error.response?.status === 400){
@@ -51,7 +58,7 @@ const updateManager = async(outletId,payload) => {
 const getManager = async(phone,token) => { 
     try {
         const response = await managerService.post(
-            "/manager/get",
+            "/managerAuth/get",
             {
                 headers:{
                     token

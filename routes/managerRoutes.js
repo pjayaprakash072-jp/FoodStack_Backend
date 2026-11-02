@@ -24,7 +24,7 @@ const {
 router.post('/create',createManager)
 router.get('/get',verifyToken,getManager);
 
-router.put('/update',verifyToken,authorizeRoles("manager"),updateManager);
+router.put('/update',verifyToken,authorizeRoles("manager","vendor"),updateManager);
 router.put('/outlet/update',verifyToken,authorizeRoles("manager"),updateOutlet);
 router.get('/categories/outlet',verifyToken,authorizeRoles("manager"),getMenuCategoriesByOutlet);
 router.post('/category/create',verifyToken,authorizeRoles("manager"),upload.single("image"),createMenuCategory);
