@@ -1,6 +1,14 @@
 const router = require('express').Router();
 const verifyToken = require('../middleware/verifyTokenAuth')
-const {createVendorAuth,loginVendor,googleLogin,deleteVendorAuth,updateVendorAuth,forgotPassword,resetPassword} = require('../controllers/vendorAuthController');
+const {
+    createVendorAuth,
+    loginVendor,
+    googleLogin,
+    deleteVendorAuth,
+    updateVendorAuth,
+    forgotPassword,
+    resetPassword
+} = require('../controllers/vendorAuthController');
 router.post("/create",createVendorAuth);
 router.post("/login",loginVendor);
 router.post("/google-login",googleLogin);

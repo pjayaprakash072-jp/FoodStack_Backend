@@ -97,6 +97,13 @@ const loginManager = async(req,res)=>{
             }
         )
     } catch (error) {
+        console.log("Error, while manager Login!", error)
+        res.status(500).json(
+            {
+                message:"Internal server Error, Failed to Login manager!",
+                error:error.message
+            }
+        )
     }
 }
 const getManager = async(req,res)=>{

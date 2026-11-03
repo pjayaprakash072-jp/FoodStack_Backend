@@ -73,7 +73,7 @@ const verifyToken = async (req, res, next) => {
         if(decoded.role ==="manager"){
             const authId = decoded.id;
             const manager = await Manager.findOne({authId});
-            req.managerId = manager.id;
+            req.managerId = manager._id;
             req.outletId = manager.outlet;
             req.manager = manager;
         }
