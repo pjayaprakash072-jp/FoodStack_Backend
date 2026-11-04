@@ -3,7 +3,11 @@ const Category = require("../models/MenuCategory");
 const Outlet = require('../models/Outlet')
 const cloudinary = require('../config/cloudinary');
 const Vendor = require('../models/Vendor')
-const {getCache,setCache,deleteCache} = require('../utils/cache')
+const {
+    getCache,
+    setCache,
+    deleteCache
+} = require('../utils/cache')
 
 const createMenuItem = async (req, res) => {
     // console.log(req.body)

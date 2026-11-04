@@ -4,7 +4,10 @@ const jwt = require('jsonwebtoken');
 const crypto = require('crypto')
 const {setCache} = require("../utils/cache")
 const Vendor = require("../models/Auth/VendorAuth")
-const {sendWelcomeEmail,sendForgotPasswordLink} = require('../utils/email')
+const {
+    sendWelcomeEmail,
+    sendForgotPasswordLink
+} = require('../utils/email')
 const {OAuth2Client } = require('google-auth-library')
 const googleClient = new OAuth2Client(
     process.env.GOOGLE_CLIENT_ID

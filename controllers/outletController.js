@@ -4,7 +4,12 @@ const MenuCategory = require('../models/MenuCategory');
 const MenuItem = require('../models/MenuItem');
 const cloudinary = require('../config/cloudinary');
 const {getCache , setCache, deleteCache} = require('../utils/cache')
-const {crateManagerAuth,crateManager,getManager,updateManager} = require('../service/managerService')
+const {
+    crateManagerAuth,
+    crateManager,
+    getManager,
+    updateManager
+} = require('../service/managerService')
 
 const createOutlet = async (req, res) => {
     try {

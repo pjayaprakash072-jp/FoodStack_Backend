@@ -2,7 +2,11 @@ const MenuCategory = require('../models/MenuCategory');
 const Outlet = require('../models/Outlet');
 const MenuItem = require('../models/MenuItem');
 const cloudinary = require('../config/cloudinary');
-const {getCache,setCache,deleteCache} = require("../utils/cache")
+const {
+    getCache,
+    setCache,
+    deleteCache
+} = require("../utils/cache")
 
 const createMenuCategory = async(req,res)=>{
     const outletId = req.role === "manager"? req.outletId : req.query.outletId;

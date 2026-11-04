@@ -1,5 +1,9 @@
 const router = require('express').Router();
-const {createUserAuth,loginUser,verifyUserEmail} = require('../../controllers/User/userAuthController');
+const {
+    createUserAuth,
+    loginUser,
+    verifyUserEmail
+} = require('../../controllers/User/userAuthController');
 const verifyCaptcha = require("../../middleware/verifyCaptcha")
 router.post("/create",verifyCaptcha,createUserAuth);
 router.post("/login", loginUser);

@@ -1,4 +1,11 @@
-const {createOrder,getAllOrdersByUser,getOneOrder,getAllOrderByVendor,getOrdersByOutlet,updateOrder} = require('../../controllers/User/orderController')
+const {
+    createOrder,
+    getAllOrdersByUser,
+    getOneOrder,
+    getAllOrderByVendor,
+    getOrdersByOutlet,
+    updateOrder
+} = require('../../controllers/User/orderController')
 const verifyToken = require('../../middleware/verifyToken')
 const authorizeRoles = require('../../middleware/authorizeRoles')
 
